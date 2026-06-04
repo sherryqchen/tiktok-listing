@@ -1,0 +1,65 @@
+{
+  "brand": {
+    "name": "INKERASTORY",
+    "product": "personalized photo and quote canvas print",
+    "tagline": "Ink Your Story on Canvas",
+    "audience": "TikTok Shop buyers looking for personalized wall art and meaningful gifts"
+  },
+  "assets": [
+    {
+      "theme_id": "pets",
+      "theme_name": "Pet Portrait Memories",
+      "slot": "main_image",
+      "kind": "listing-compliant",
+      "filename": "pets_01_main_clean_canvas.png",
+      "hook": "A clean product-first image for the listing main image.",
+      "brand": "INKERASTORY",
+      "target_size": "square 1:1 composition, 1600 x 1600 px target",
+      "prompt": "Use case: product-mockup\nAsset type: TikTok Shop main product image\nPrimary request: Create a clean ecommerce product image for INKERASTORY personalized pet portrait canvas wall art.\nScene/backdrop: pure white studio background, soft shadow only under the physical canvas, no clutter.\nSubject: one rectangular stretched canvas showing a beautiful custom portrait of a dog and cat together, realistic fur detail, warm eye contact, printed on canvas with visible edge depth.\nComposition: square 1:1, product centered, canvas fills about 85% of frame, front angle with slight side depth.\nStyle: premium ecommerce photography, bright clean light, high-resolution realistic canvas texture.\nText policy: no overlay text, no watermark, no platform UI.\nAvoid: watermarks, QR codes, platform UI, distorted hands, tiny unreadable text, misleading scale, messy backgrounds, official sports logos, team crests, celebrity or athlete likenesses, copyrighted characters"
+    },
+    {
+      "theme_id": "pets",
+      "theme_name": "Pet Portrait Memories",
+      "slot": "image_2",
+      "kind": "viral-creative",
+      "filename": "pets_02_owner_reaction.png",
+      "hook": "Owner emotion drives saves and shares.",
+      "brand": "INKERASTORY",
+      "target_size": "square 1:1 composition, 1600 x 1600 px target",
+      "prompt": "Use case: ads-marketing\nAsset type: TikTok Shop secondary product image / ad creative\nPrimary request: Create an emotional lifestyle image of a pet owner reacting to a personalized pet portrait canvas.\nScene/backdrop: cozy living room with soft daylight, pet bed and neutral decor.\nSubject: a smiling pet owner holding a custom canvas portrait of their dog, with the real dog sitting nearby; the canvas must clearly look like the product.\nComposition: square 1:1, canvas and dog are the focal points, human emotion visible but not overpowering the product.\nStyle: photorealistic natural lifestyle photography, warm and giftable, premium home decor mood.\nText policy: no overlay text, no watermark.\nAvoid: watermarks, QR codes, platform UI, distorted hands, tiny unreadable text, misleading scale, messy backgrounds, official sports logos, team crests, celebrity or athlete likenesses, copyrighted characters"
+    },
+    {
+      "theme_id": "pets",
+      "theme_name": "Pet Portrait Memories",
+      "slot": "image_3",
+      "kind": "viral-creative",
+      "filename": "pets_03_memorial_keepsake.png",
+      "hook": "Gentle keepsake angle without feeling sad or heavy.",
+      "brand": "INKERASTORY",
+      "target_size": "square 1:1 composition, 1600 x 1600 px target",
+      "prompt": "Use case: ads-marketing\nAsset type: TikTok Shop secondary product image\nPrimary request: Create a tasteful pet memorial keepsake scene for a custom pet portrait canvas.\nScene/backdrop: calm bedroom or reading corner, soft morning light, small flowers, neutral wall.\nSubject: a rectangular canvas showing a beloved pet portrait, displayed respectfully on a wall or shelf; product is clear and premium.\nComposition: square 1:1, peaceful emotional mood, canvas centered with a little surrounding decor.\nStyle: realistic lifestyle photography, gentle and warm, not dark, not overly sad.\nText policy: no overlay text, no watermark, no readable memorial dates.\nAvoid: watermarks, QR codes, platform UI, distorted hands, tiny unreadable text, misleading scale, messy backgrounds, official sports logos, team crests, celebrity or athlete likenesses, copyrighted characters"
+    },
+    {
+      "theme_id": "pets",
+      "theme_name": "Pet Portrait Memories",
+      "slot": "image_4",
+      "kind": "listing-support",
+      "filename": "pets_04_room_mockup.png",
+      "hook": "Shows how pet art upgrades home decor.",
+      "brand": "INKERASTORY",
+      "target_size": "square 1:1 composition, 1600 x 1600 px target",
+      "prompt": "Use case: product-mockup\nAsset type: TikTok Shop room mockup\nPrimary request: Create a modern room mockup for personalized pet portrait wall art.\nScene/backdrop: bright modern living room with a sofa, neutral tones, clean decor, soft daylight.\nSubject: a large rectangular custom canvas portrait of a golden retriever and a tabby cat hanging above the sofa, realistic canvas texture and edge depth.\nComposition: square 1:1, product large and centered, room gives scale but does not distract.\nStyle: premium interior photography, warm and sophisticated, realistic proportions.\nText policy: no overlay text, no watermark.\nAvoid: watermarks, QR codes, platform UI, distorted hands, tiny unreadable text, misleading scale, messy backgrounds, official sports logos, team crests, celebrity or athlete likenesses, copyrighted characters"
+    },
+    {
+      "theme_id": "pets",
+      "theme_name": "Pet Portrait Memories",
+      "slot": "image_5",
+      "kind": "listing-support",
+      "filename": "pets_05_gift_scenario.png",
+      "hook": "Giftable for birthdays, holidays, pet parents.",
+      "brand": "INKERASTORY",
+      "target_size": "square 1:1 composition, 1600 x 1600 px target",
+      "prompt": "Use case: ads-marketing\nAsset type: TikTok Shop secondary product image\nPrimary request: Create a gift scenario image for a personalized pet portrait canvas.\nScene/backdrop: bright kitchen or living room table with simple gift wrap and ribbon, cheerful natural light.\nSubject: a custom canvas portrait of a cute dog beside a gift box, pet owner hands presenting it as a meaningful gift.\nComposition: square 1:1, product front-facing and clear, gift context obvious, clean premium look.\nStyle: photorealistic ecommerce lifestyle image, warm and joyful.\nText policy: no overlay text, no watermark.\nAvoid: watermarks, QR codes, platform UI, distorted hands, tiny unreadable text, misleading scale, messy backgrounds, official sports logos, team crests, celebrity or athlete likenesses, copyrighted characters"
+    }
+  ]
+}

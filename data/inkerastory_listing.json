@@ -1,0 +1,123 @@
+{
+  "template_path": "/Users/qianyunchen/Downloads/Tiktoksellercenter_Home Supplies_20260604_Wall Arts,Prints_template.xlsx",
+  "output_path": "outputs/inkerastory_tiktok_bulk_upload.xlsx",
+  "listing": {
+    "category": "Home Decor/Posters & Prints/Prints",
+    "brand": "No brand",
+    "product_name": "Personalized Canvas Print | Custom Photo & Quote Wall Art | Upload Your Picture & Create Your Story | INKERASTORY",
+    "product_description": "INKERASTORY - Ink Your Story on Canvas\n\nTransform your favorite memories, photos, and meaningful words into beautiful wall art.\n\nAt INKERASTORY, every canvas is made just for you. Simply upload your photo, add your favorite quote, song lyrics, family message, or special date, and we'll create a personalized artwork that tells your unique story.\n\nPerfect for:\n- Family photos\n- Wedding memories\n- Anniversary gifts\n- Baby milestones\n- Pet portraits\n- Travel memories\n- Inspirational quotes\n- Memorial keepsakes\n\nProduct Features:\n- Premium HD printing\n- Fade-resistant inks\n- Available as Poster / Print Only or Stretched Canvas\n- Multiple sizes available\n- Personalized design made to order\n- Ready-to-display canvas option\n\nHow It Works:\n1. Upload your photo\n2. Add your text or quote\n3. Place your order\n4. We create your custom artwork\n5. Receive a unique piece that tells your story\n\nINKERASTORY - Because every story deserves a place on your wall.",
+    "images": {
+      "main_image": "https://example.com/replace-with-inkerastory-main-image.jpg",
+      "image_2": "https://example.com/replace-with-size-comparison.jpg",
+      "image_3": "https://example.com/replace-with-print-vs-canvas.jpg",
+      "image_4": "https://example.com/replace-with-room-mockup.jpg",
+      "image_5": "https://example.com/replace-with-gift-scenario.jpg"
+    },
+    "variation_1_name": "Type",
+    "variation_2_name": "Size",
+    "delivery": "Default",
+    "warehouse_quantity_1": 100,
+    "warehouse_quantity_2": 0,
+    "status": "Draft(2)",
+    "attributes": {
+      "pattern": "Print",
+      "occasion": "Anniversary",
+      "style": "Minimalist",
+      "feature": "Handmade",
+      "shape": "Rectangle",
+      "material_print": "Printed Cotton",
+      "material_canvas": "Cotton Canvas",
+      "setting": "No",
+      "use": "No",
+      "installment": "No",
+      "dangerous_goods": "",
+      "other_dangerous_goods": "No",
+      "ca_prop65_repro_chems": "",
+      "reprotoxic_chemicals": "",
+      "ca_prop65_carcinogens": "",
+      "carcinogen": ""
+    }
+  },
+  "skus": [
+    {
+      "seller_sku": "IS-P-812",
+      "type": "Print Only",
+      "size": "8 x 12 in",
+      "price": 14.98,
+      "weight_lb": 0.21,
+      "length_in": 9.84,
+      "width_in": 5.91,
+      "height_in": 0.79
+    },
+    {
+      "seller_sku": "IS-C-812",
+      "type": "Stretched Canvas",
+      "size": "8 x 12 in",
+      "price": 19.99,
+      "weight_lb": 0.63,
+      "length_in": 12.60,
+      "width_in": 8.27,
+      "height_in": 0.79
+    },
+    {
+      "seller_sku": "IS-P-1218",
+      "type": "Print Only",
+      "size": "12 x 18 in",
+      "price": 17.99,
+      "weight_lb": 0.28,
+      "length_in": 14.17,
+      "width_in": 5.91,
+      "height_in": 0.98
+    },
+    {
+      "seller_sku": "IS-C-1218",
+      "type": "Stretched Canvas",
+      "size": "12 x 18 in",
+      "price": 29.99,
+      "weight_lb": 1.08,
+      "length_in": 18.11,
+      "width_in": 12.60,
+      "height_in": 0.79
+    },
+    {
+      "seller_sku": "IS-P-1624",
+      "type": "Print Only",
+      "size": "16 x 24 in",
+      "price": 26.99,
+      "weight_lb": 0.37,
+      "length_in": 18.50,
+      "width_in": 5.91,
+      "height_in": 1.18
+    },
+    {
+      "seller_sku": "IS-C-1624",
+      "type": "Stretched Canvas",
+      "size": "16 x 24 in",
+      "price": 39.99,
+      "weight_lb": 1.54,
+      "length_in": 24.02,
+      "width_in": 16.14,
+      "height_in": 0.98
+    },
+    {
+      "seller_sku": "IS-P-2436",
+      "type": "Print Only",
+      "size": "24 x 36 in",
+      "price": 39.99,
+      "weight_lb": 0.58,
+      "length_in": 26.77,
+      "width_in": 5.91,
+      "height_in": 1.57
+    },
+    {
+      "seller_sku": "IS-C-2436",
+      "type": "Stretched Canvas",
+      "size": "24 x 36 in",
+      "price": 50.99,
+      "weight_lb": 3.48,
+      "length_in": 35.83,
+      "width_in": 24.02,
+      "height_in": 0.87
+    }
+  ]
+}

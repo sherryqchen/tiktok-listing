@@ -1,0 +1,29 @@
+{
+  "created_at": "2026-06-04T21:09:54Z",
+  "mode": "mock",
+  "assets": [
+    {
+      "theme_id": "pets",
+      "slot": "image_5",
+      "kind": "listing-support",
+      "filename": "pets_05_gift_scenario.png",
+      "output_path": "outputs/generated_images/pets/pets_05_gift_scenario.png",
+      "model": "gpt-image-2",
+      "size": "2048x2048",
+      "quality": "medium",
+      "output_format": "png",
+      "prompt": "Use case: ads-marketing\nAsset type: TikTok Shop secondary product image\nPrimary request: Create a gift scenario image for a personalized pet portrait canvas.\nScene/backdrop: bright kitchen or living room table with simple gift wrap and ribbon, cheerful natural light.\nSubject: a custom canvas portrait of a cute dog beside a gift box, pet owner hands presenting it as a meaningful gift.\nComposition: square 1:1, product front-facing and clear, gift context obvious, clean premium look.\nStyle: photorealistic ecommerce lifestyle image, warm and joyful.\nText policy: no overlay text, no watermark.\nAvoid: watermarks, QR codes, platform UI, distorted hands, tiny unreadable text, misleading scale, messy backgrounds, official sports logos, team crests, celebrity or athlete likenesses, copyrighted characters",
+      "status": "mocked",
+      "validation": {
+        "exists": true,
+        "path": "outputs/generated_images/pets/pets_05_gift_scenario.png",
+        "bytes": 15411,
+        "dimensions": [
+          2048,
+          2048
+        ],
+        "ok": true
+      }
+    }
+  ]
+}
