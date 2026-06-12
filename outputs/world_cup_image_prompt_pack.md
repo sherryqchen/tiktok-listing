@@ -102,20 +102,3 @@ Style: realistic room mockup, neutral palette with small energetic green accents
 Text policy: no labels or overlay text; leave room if a designer later adds size labels.
 Avoid: watermarks, QR codes, platform UI, distorted hands, tiny unreadable text, misleading scale, messy backgrounds, official sports logos, team crests, celebrity or athlete likenesses, copyrighted characters
 ```
-
-### image_5 - world_cup_05_print_vs_canvas.png
-
-Kind: `listing-support`
-Hook: Explains Print Only vs Stretched Canvas visually.
-
-```text
-Use case: product-mockup
-Asset type: TikTok Shop comparison image
-Primary request: Create a side-by-side product comparison for personalized soccer memory wall art: Print Only versus Stretched Canvas.
-Scene/backdrop: clean neutral studio surface with soft light.
-Subject: left side is a rolled or flat premium art print with a generic soccer fan photo; right side is a stretched canvas version with visible edge depth and canvas texture.
-Composition: square 1:1, balanced side-by-side layout, physical material difference is obvious.
-Style: premium ecommerce product photography, realistic paper and canvas texture.
-Text policy: no overlay text, no watermarks, no official marks.
-Avoid: watermarks, QR codes, platform UI, distorted hands, tiny unreadable text, misleading scale, messy backgrounds, official sports logos, team crests, celebrity or athlete likenesses, copyrighted characters
-```

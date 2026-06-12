@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 
 
@@ -25,18 +26,29 @@ def is_public_url(value: str) -> bool:
     return value.startswith("https://") or value.startswith("http://")
 
 
+def load_url_mapping(path: Path) -> dict:
+    text = path.read_text(encoding="utf-8")
+    if path.suffix.lower() == ".json":
+        data = json.loads(text)
+        return data.get("images", data)
+
+    urls = re.findall(r"https?://[^\s,;]+", text)
+    if not urls:
+        raise SystemExit(f"No image URLs found in {path}.")
+    return {key: url for key, url in zip(IMAGE_KEYS, urls)}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Apply image URLs to listing data.")
-    parser.add_argument("--urls", required=True, help="JSON file containing an images object.")
+    parser.add_argument("--urls", required=True, help="JSON file containing an images object, or a text file with one image URL per line.")
     parser.add_argument("--listing", default="data/inkerastory_listing.json")
     args = parser.parse_args()
 
     urls_path = Path(args.urls)
     listing_path = Path(args.listing)
-    urls_data = json.loads(urls_path.read_text(encoding="utf-8"))
     listing_data = json.loads(listing_path.read_text(encoding="utf-8"))
 
-    images = urls_data.get("images", {})
+    images = load_url_mapping(urls_path)
     if not images.get("main_image"):
         raise SystemExit("The image URL file must include images.main_image.")
 

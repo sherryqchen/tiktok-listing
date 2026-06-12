@@ -49,17 +49,6 @@
       "brand": "INKERASTORY",
       "target_size": "square 1:1 composition, 1600 x 1600 px target",
       "prompt": "Use case: product-mockup\nAsset type: TikTok Shop room mockup\nPrimary request: Create a modern room mockup for personalized pet portrait wall art.\nScene/backdrop: bright modern living room with a sofa, neutral tones, clean decor, soft daylight.\nSubject: a large rectangular custom canvas portrait of a golden retriever and a tabby cat hanging above the sofa, realistic canvas texture and edge depth.\nComposition: square 1:1, product large and centered, room gives scale but does not distract.\nStyle: premium interior photography, warm and sophisticated, realistic proportions.\nText policy: no overlay text, no watermark.\nAvoid: watermarks, QR codes, platform UI, distorted hands, tiny unreadable text, misleading scale, messy backgrounds, official sports logos, team crests, celebrity or athlete likenesses, copyrighted characters"
-    },
-    {
-      "theme_id": "pets",
-      "theme_name": "Pet Portrait Memories",
-      "slot": "image_5",
-      "kind": "listing-support",
-      "filename": "pets_05_gift_scenario.png",
-      "hook": "Giftable for birthdays, holidays, pet parents.",
-      "brand": "INKERASTORY",
-      "target_size": "square 1:1 composition, 1600 x 1600 px target",
-      "prompt": "Use case: ads-marketing\nAsset type: TikTok Shop secondary product image\nPrimary request: Create a gift scenario image for a personalized pet portrait canvas.\nScene/backdrop: bright kitchen or living room table with simple gift wrap and ribbon, cheerful natural light.\nSubject: a custom canvas portrait of a cute dog beside a gift box, pet owner hands presenting it as a meaningful gift.\nComposition: square 1:1, product front-facing and clear, gift context obvious, clean premium look.\nStyle: photorealistic ecommerce lifestyle image, warm and joyful.\nText policy: no overlay text, no watermark.\nAvoid: watermarks, QR codes, platform UI, distorted hands, tiny unreadable text, misleading scale, messy backgrounds, official sports logos, team crests, celebrity or athlete likenesses, copyrighted characters"
     }
   ]
 }

@@ -49,17 +49,6 @@
       "brand": "INKERASTORY",
       "target_size": "square 1:1 composition, 1600 x 1600 px target",
       "prompt": "Use case: product-mockup\nAsset type: TikTok Shop size comparison image\nPrimary request: Create a clean wall mockup showing four personalized soccer memory canvas sizes.\nScene/backdrop: bright modern wall above a simple console table, minimal decor.\nSubject: four rectangular canvases in increasing sizes, each showing a different generic soccer celebration memory photo, no official logos or team crests.\nComposition: square 1:1, clear size progression from small to large, enough spacing, product remains premium.\nStyle: realistic room mockup, neutral palette with small energetic green accents.\nText policy: no labels or overlay text; leave room if a designer later adds size labels.\nAvoid: watermarks, QR codes, platform UI, distorted hands, tiny unreadable text, misleading scale, messy backgrounds, official sports logos, team crests, celebrity or athlete likenesses, copyrighted characters"
-    },
-    {
-      "theme_id": "world_cup",
-      "theme_name": "World Cup Inspired Soccer Memories",
-      "slot": "image_5",
-      "kind": "listing-support",
-      "filename": "world_cup_05_print_vs_canvas.png",
-      "hook": "Explains Print Only vs Stretched Canvas visually.",
-      "brand": "INKERASTORY",
-      "target_size": "square 1:1 composition, 1600 x 1600 px target",
-      "prompt": "Use case: product-mockup\nAsset type: TikTok Shop comparison image\nPrimary request: Create a side-by-side product comparison for personalized soccer memory wall art: Print Only versus Stretched Canvas.\nScene/backdrop: clean neutral studio surface with soft light.\nSubject: left side is a rolled or flat premium art print with a generic soccer fan photo; right side is a stretched canvas version with visible edge depth and canvas texture.\nComposition: square 1:1, balanced side-by-side layout, physical material difference is obvious.\nStyle: premium ecommerce product photography, realistic paper and canvas texture.\nText policy: no overlay text, no watermarks, no official marks.\nAvoid: watermarks, QR codes, platform UI, distorted hands, tiny unreadable text, misleading scale, messy backgrounds, official sports logos, team crests, celebrity or athlete likenesses, copyrighted characters"
     }
   ]
 }

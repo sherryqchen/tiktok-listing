@@ -1,6 +1,6 @@
 {
   "theme_id": "world_cup",
   "images": {
-    "image_3": "https://your-public-image-host/world_cup_03_gift_unboxing.png"
+    "main_image": "https://your-public-image-host/world_cup_01_main_clean_canvas.png"
   }
 }

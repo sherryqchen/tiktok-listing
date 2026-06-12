@@ -1,26 +1,30 @@
 {
-  "created_at": "2026-06-04T21:09:54Z",
-  "mode": "mock",
+  "created_at": "2026-06-11T16:25:47Z",
+  "mode": "live",
   "assets": [
     {
       "theme_id": "pets",
       "slot": "image_5",
       "kind": "listing-support",
-      "filename": "pets_05_gift_scenario.png",
-      "output_path": "outputs/generated_images/pets/pets_05_gift_scenario.png",
-      "model": "gpt-image-2",
-      "size": "2048x2048",
+      "filename": "pets_05_size_chart.png",
+      "output_path": "outputs/generated_images/pets/pets_05_size_chart.png",
+      "model": "gpt-image-1.5",
+      "provider": "openai",
+      "size": "1024x1024",
       "quality": "medium",
       "output_format": "png",
-      "prompt": "Use case: ads-marketing\nAsset type: TikTok Shop secondary product image\nPrimary request: Create a gift scenario image for a personalized pet portrait canvas.\nScene/backdrop: bright kitchen or living room table with simple gift wrap and ribbon, cheerful natural light.\nSubject: a custom canvas portrait of a cute dog beside a gift box, pet owner hands presenting it as a meaningful gift.\nComposition: square 1:1, product front-facing and clear, gift context obvious, clean premium look.\nStyle: photorealistic ecommerce lifestyle image, warm and joyful.\nText policy: no overlay text, no watermark.\nAvoid: watermarks, QR codes, platform UI, distorted hands, tiny unreadable text, misleading scale, messy backgrounds, official sports logos, team crests, celebrity or athlete likenesses, copyrighted characters",
-      "status": "mocked",
+      "prompt": "Use case: product-mockup\nAsset type: TikTok Shop size comparison chart\nPrimary request: Create a clean, accurate size comparison display showing four canvas sizes for a pet portrait product line.\nScene/backdrop: bright white or very light neutral wall, identical consistent camera angle and lighting for all four canvases — same eye-level straight-on perspective with no distortion or tilt.\nSubject: four rectangular stretched canvases arranged in a horizontal row in ascending size order, each showing a different pet portrait (a golden retriever, a tabby cat, a beagle, and a mixed-breed dog). Canvases are: 8×12 in (smallest, leftmost), 12×18 in, 16×24 in, 24×36 in (largest, rightmost). Each canvas must have its size label in clean sans-serif text directly below it.\nA ceramic mug on a small shelf near the 8×12 canvas provides a real-world scale anchor.\nComposition: square 1:1, all four canvases share the same wall, same height baseline, consistent spacing between them, size labels clearly legible.\nStyle: realistic interior product photography, bright even lighting across all canvases, professional neutral aesthetic, premium quality.\nText policy: size labels only — '8×12 in', '12×18 in', '16×24 in', '24×36 in' — in clean readable text beneath each canvas; no other overlays, no watermarks.\nAvoid: watermarks, perspective distortion, mismatched angles between canvases, dramatically different lighting on different canvases, cluttered backgrounds\nAvoid: watermarks, QR codes, platform UI, distorted hands, tiny unreadable text, misleading scale, messy backgrounds, official sports logos, team crests, celebrity or athlete likenesses, copyrighted characters",
+      "status": "generated",
+      "openai_request_id": "req_d6e546eb003d4a31bf6ee0ea23fd520e",
+      "client_request_id": "inkerastory-image-agent-b02e0513-429a-47e0-936c-e1922a29ddc1",
+      "revised_prompt": null,
       "validation": {
         "exists": true,
-        "path": "outputs/generated_images/pets/pets_05_gift_scenario.png",
-        "bytes": 15411,
+        "path": "outputs/generated_images/pets/pets_05_size_chart.png",
+        "bytes": 705627,
         "dimensions": [
-          2048,
-          2048
+          1024,
+          1024
         ],
         "ok": true
       }

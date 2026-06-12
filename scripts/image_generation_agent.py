@@ -5,7 +5,7 @@ The agent has three practical modes:
 
 - dry-run: build a generation plan without calling an API
 - mock: create local placeholder PNGs for workflow testing
-- live: call the OpenAI Image API using OPENAI_API_KEY
+- live: call Gemini or the OpenAI Image API using the matching API key
 """
 
 from __future__ import annotations
@@ -30,11 +30,14 @@ from build_image_prompt_pack import build_manifest, load_config, selected_themes
 
 DEFAULT_CONFIG = Path("data/image_workflows.json")
 DEFAULT_OUTPUT_DIR = Path("outputs/generated_images")
-DEFAULT_MODEL = "gpt-image-2"
-DEFAULT_SIZE = "2048x2048"
+DEFAULT_PROVIDER = "gemini"
+DEFAULT_OPENAI_MODEL = "gpt-image-1.5"
+DEFAULT_GEMINI_MODEL = "gemini-3.1-flash-image"
+DEFAULT_SIZE = "1024x1024"
 DEFAULT_QUALITY = "medium"
 DEFAULT_FORMAT = "png"
 OPENAI_IMAGE_ENDPOINT = "https://api.openai.com/v1/images/generations"
+GEMINI_IMAGE_ENDPOINT_TEMPLATE = "https://generativelanguage.googleapis.com/v1/models/{model}:generateContent"
 
 
 def load_env_file(path: Path = Path(".env")) -> None:
@@ -47,12 +50,13 @@ def load_env_file(path: Path = Path(".env")) -> None:
         key, value = line.split("=", 1)
         key = key.strip()
         value = value.strip().strip('"').strip("'")
-        if key and key not in os.environ:
+        if key and (key not in os.environ or not os.environ.get(key)):
             os.environ[key] = value
 
 
 @dataclass
 class GenerationOptions:
+    provider: str
     model: str
     size: str
     quality: str
@@ -68,6 +72,9 @@ class GenerationOptions:
 def parse_size(size: str) -> tuple[int, int] | None:
     if size == "auto":
         return None
+    allowed = {"1024x1024", "1536x1024", "1024x1536"}
+    if size not in allowed:
+        raise SystemExit(f"Invalid size {size!r}. Use one of: {', '.join(sorted(allowed))}, or auto.")
     if "x" not in size:
         raise SystemExit(f"Invalid size {size!r}. Expected format like 1024x1024 or 2048x2048.")
     width_text, height_text = size.lower().split("x", 1)
@@ -170,6 +177,69 @@ def request_openai_image(asset: dict[str, Any], options: GenerationOptions) -> t
     return base64.b64decode(image_base64), metadata
 
 
+def request_gemini_image(asset: dict[str, Any], options: GenerationOptions) -> tuple[bytes, dict[str, Any]]:
+    load_env_file()
+    api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+    if not api_key:
+        raise SystemExit("GEMINI_API_KEY is not set. Add it to .env, or use --dry-run / --mock to test without calling the API.")
+    if options.output_format != "png":
+        raise SystemExit("Gemini generation currently saves PNG files in this workflow. Use --output-format png.")
+
+    payload = {
+        "contents": [
+            {
+                "parts": [
+                    {"text": asset["prompt"]},
+                ],
+            }
+        ]
+    }
+    request = urllib.request.Request(
+        GEMINI_IMAGE_ENDPOINT_TEMPLATE.format(model=options.model),
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "x-goog-api-key": api_key,
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(request, timeout=options.timeout) as response:
+            response_data = json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as error:
+        body = error.read().decode("utf-8", errors="replace")
+        raise SystemExit(f"Gemini image request failed with HTTP {error.code}:\n{body}") from error
+    except urllib.error.URLError as error:
+        raise SystemExit(f"Gemini image request failed: {error}") from error
+
+    parts = response_data.get("candidates", [{}])[0].get("content", {}).get("parts", [])
+    text_parts: list[str] = []
+    for part in parts:
+        if part.get("text"):
+            text_parts.append(part["text"])
+            continue
+        inline_data = part.get("inlineData") or part.get("inline_data")
+        if inline_data and inline_data.get("data"):
+            metadata = {
+                "gemini_model": options.model,
+                "gemini_mime_type": inline_data.get("mimeType") or inline_data.get("mime_type"),
+            }
+            if text_parts:
+                metadata["gemini_text"] = "\n".join(text_parts)
+            return base64.b64decode(inline_data["data"]), metadata
+
+    raise SystemExit(f"Gemini response did not include image inlineData:\n{json.dumps(response_data)[:1000]}")
+
+
+def request_image(asset: dict[str, Any], options: GenerationOptions) -> tuple[bytes, dict[str, Any]]:
+    if options.provider == "gemini":
+        return request_gemini_image(asset, options)
+    if options.provider == "openai":
+        return request_openai_image(asset, options)
+    raise SystemExit(f"Unsupported provider: {options.provider}")
+
+
 def validate_output(path: Path, options: GenerationOptions) -> dict[str, Any]:
     result: dict[str, Any] = {"exists": path.exists(), "path": str(path)}
     if not path.exists():
@@ -225,7 +295,14 @@ def run_generate(args: argparse.Namespace) -> int:
     if not assets:
         raise SystemExit("No assets selected.")
 
+    if getattr(args, "prompt", None):
+        if not slots or len(slots) != 1:
+            raise SystemExit("--prompt requires exactly one --slot.")
+        for asset in assets:
+            asset["prompt"] = args.prompt
+
     options = GenerationOptions(
+        provider=args.provider,
         model=args.model,
         size=args.size,
         quality=args.quality,
@@ -237,6 +314,8 @@ def run_generate(args: argparse.Namespace) -> int:
         dry_run=args.dry_run,
         mock=args.mock,
     )
+    if args.provider == "gemini" and options.output_format != "png":
+        raise SystemExit("Gemini provider currently supports --output-format png in this workflow.")
     if options.mock and options.output_format != "png":
         raise SystemExit("--mock only supports --output-format png because it creates local PNG placeholders.")
     output_dir = Path(args.output_dir)
@@ -252,6 +331,7 @@ def run_generate(args: argparse.Namespace) -> int:
             "filename": Path(out_path).name,
             "output_path": str(out_path),
             "model": options.model,
+            "provider": options.provider,
             "size": options.size,
             "quality": options.quality,
             "output_format": options.output_format,
@@ -275,7 +355,7 @@ def run_generate(args: argparse.Namespace) -> int:
             write_mock_png(out_path, options.size, asset["filename"])
             record["status"] = "mocked"
         else:
-            image_bytes, metadata = request_openai_image(asset, options)
+            image_bytes, metadata = request_image(asset, options)
             out_path.write_bytes(image_bytes)
             record.update(metadata)
             record["status"] = "generated"
@@ -311,17 +391,59 @@ def run_status(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_doctor(args: argparse.Namespace) -> int:
+    load_env_file(Path(args.env))
+    openai_key = os.environ.get("OPENAI_API_KEY", "")
+    gemini_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY", "")
+    output_dir = Path(args.output_dir)
+    assets = select_assets(Path(args.config), args.theme, set(args.slot or []) or None)
+    present = 0
+    print("Image generation doctor")
+    print(f"- config: {args.config}")
+    print(f"- .env exists: {Path(args.env).exists()}")
+    print(f"- default provider: {DEFAULT_PROVIDER}")
+    print(f"- GEMINI_API_KEY loaded: {bool(gemini_key)}")
+    if gemini_key:
+        print(f"- GEMINI_API_KEY hint: ...{gemini_key[-4:]}")
+    print(f"- OPENAI_API_KEY loaded: {bool(openai_key)}")
+    if openai_key:
+        print(f"- OPENAI_API_KEY hint: ...{openai_key[-4:]}")
+    print(f"- default Gemini model: {DEFAULT_GEMINI_MODEL}")
+    print(f"- default OpenAI model: {DEFAULT_OPENAI_MODEL}")
+    print(f"- default size: {DEFAULT_SIZE}")
+    print("- supported sizes: 1024x1024, 1536x1024, 1024x1536, auto")
+    for asset in assets:
+        path = asset_output_path(output_dir, asset, args.output_format)
+        if path.exists():
+            present += 1
+    print(f"- selected files present: {present}/{len(assets)}")
+    if not gemini_key:
+        print("Next: add GEMINI_API_KEY to .env, then use live Gemini generation.")
+    print("Note: --mock creates placeholder PNGs only. It will not create real product-photo content.")
+    return 0
+
+
+def default_model_for_provider(provider: str) -> str:
+    if provider == "gemini":
+        return DEFAULT_GEMINI_MODEL
+    if provider == "openai":
+        return DEFAULT_OPENAI_MODEL
+    raise SystemExit(f"Unsupported provider: {provider}")
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="INKERASTORY image generation agent.")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     generate = subparsers.add_parser("generate", help="Generate images or create a dry-run plan.")
     generate.add_argument("--config", default=str(DEFAULT_CONFIG))
-    generate.add_argument("--theme", choices=["world_cup", "pets"], help="Theme to generate. Omit for all themes.")
+    generate.add_argument("--theme", choices=["world_cup", "pets", "pets_original", "pets_royal", "pets_anime", "people"], help="Theme to generate. Omit for all themes.")
+    generate.add_argument("--prompt", help="Override the prompt for the selected slot (requires exactly one --slot).")
     generate.add_argument("--slot", action="append", help="Asset slot to generate, e.g. main_image. Repeatable.")
     generate.add_argument("--limit", type=int, help="Generate only the first N selected assets.")
     generate.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR))
-    generate.add_argument("--model", default=DEFAULT_MODEL)
+    generate.add_argument("--provider", choices=["gemini", "openai"], default=DEFAULT_PROVIDER)
+    generate.add_argument("--model")
     generate.add_argument("--size", default=DEFAULT_SIZE)
     generate.add_argument("--quality", choices=["low", "medium", "high", "auto"], default=DEFAULT_QUALITY)
     generate.add_argument("--output-format", choices=["png", "jpeg", "webp"], default=DEFAULT_FORMAT)
@@ -335,11 +457,20 @@ def build_parser() -> argparse.ArgumentParser:
 
     status = subparsers.add_parser("status", help="Show which expected image files exist.")
     status.add_argument("--config", default=str(DEFAULT_CONFIG))
-    status.add_argument("--theme", choices=["world_cup", "pets"], help="Theme to inspect. Omit for all themes.")
+    status.add_argument("--theme", choices=["world_cup", "pets", "pets_original", "pets_royal", "pets_anime", "people"], help="Theme to inspect. Omit for all themes.")
     status.add_argument("--slot", action="append", help="Asset slot to inspect. Repeatable.")
     status.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR))
     status.add_argument("--output-format", choices=["png", "jpeg", "webp"], default=DEFAULT_FORMAT)
     status.set_defaults(func=run_status)
+
+    doctor = subparsers.add_parser("doctor", help="Check environment and generation settings.")
+    doctor.add_argument("--config", default=str(DEFAULT_CONFIG))
+    doctor.add_argument("--theme", choices=["world_cup", "pets", "pets_original", "pets_royal", "pets_anime", "people"], help="Theme to inspect. Omit for all themes.")
+    doctor.add_argument("--slot", action="append", help="Asset slot to inspect. Repeatable.")
+    doctor.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR))
+    doctor.add_argument("--output-format", choices=["png", "jpeg", "webp"], default=DEFAULT_FORMAT)
+    doctor.add_argument("--env", default=".env")
+    doctor.set_defaults(func=run_doctor)
 
     return parser
 
@@ -348,6 +479,8 @@ def main() -> int:
     load_env_file()
     parser = build_parser()
     args = parser.parse_args()
+    if hasattr(args, "provider") and not args.model:
+        args.model = default_model_for_provider(args.provider)
     return args.func(args)
 
 

@@ -62,16 +62,16 @@
         {
           "slot": "image_4",
           "kind": "listing-support",
-          "filename": "world_cup_04_size_wall_mockup.png",
-          "hook": "Shows size options without making the product feel small.",
-          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop size comparison image\nPrimary request: Create a clean wall mockup showing four personalized soccer memory canvas sizes.\nScene/backdrop: bright modern wall above a simple console table, minimal decor.\nSubject: four rectangular canvases in increasing sizes, each showing a different generic soccer celebration memory photo, no official logos or team crests.\nComposition: square 1:1, clear size progression from small to large, enough spacing, product remains premium.\nStyle: realistic room mockup, neutral palette with small energetic green accents.\nText policy: no labels or overlay text; leave room if a designer later adds size labels."
+          "filename": "world_cup_04_fan_room_mockup.png",
+          "hook": "Shows the canvas in a soccer fan living room for scale and context.",
+          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop room mockup\nPrimary request: Create a warm living room mockup with a soccer memory canvas as the centerpiece.\nScene/backdrop: modern living room, neutral walls, light sofa, subtle green soccer-themed accents (generic scarves, soccer ball decor) — no official logos.\nSubject: a large rectangular canvas showing a generic soccer family celebration memory photo, hanging above the sofa, realistic canvas texture.\nComposition: square 1:1, canvas large and centered, room provides lifestyle scale context.\nStyle: premium interior photography, celebratory but not cluttered, realistic proportions.\nText policy: no overlay text, no watermark, no official sports logos."
         },
         {
           "slot": "image_5",
           "kind": "listing-support",
-          "filename": "world_cup_05_print_vs_canvas.png",
-          "hook": "Explains Print Only vs Stretched Canvas visually.",
-          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop comparison image\nPrimary request: Create a side-by-side product comparison for personalized soccer memory wall art: Print Only versus Stretched Canvas.\nScene/backdrop: clean neutral studio surface with soft light.\nSubject: left side is a rolled or flat premium art print with a generic soccer fan photo; right side is a stretched canvas version with visible edge depth and canvas texture.\nComposition: square 1:1, balanced side-by-side layout, physical material difference is obvious.\nStyle: premium ecommerce product photography, realistic paper and canvas texture.\nText policy: no overlay text, no watermarks, no official marks."
+          "filename": "world_cup_05_size_chart.png",
+          "hook": "Size comparison chart — helps buyers pick the right canvas size.",
+          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop size comparison chart\nPrimary request: Create a clean size comparison wall display showing four canvas sizes for a soccer memory canvas product line.\nScene/backdrop: bright white or very light neutral wall, identical consistent camera angle for all four canvases — same eye-level perspective, no distortion.\nSubject: four rectangular stretched canvases arranged in a horizontal row in ascending size order, each showing a different generic soccer celebration photo (no official logos, no team crests). Canvases are: 8×12 in (smallest, left), 12×18 in, 16×24 in, 24×36 in (largest, right). Each canvas has a clean size label below it in simple sans-serif text.\nA small everyday object (a ceramic mug or a chair) is visible at the edge for real-world scale reference.\nComposition: square 1:1, all four canvases on the same wall at the same height baseline, size labels clearly readable below each canvas, even spacing between canvases.\nStyle: realistic interior product photography, consistent even lighting across all four canvases, neutral professional aesthetic.\nText policy: size labels only — '8×12 in', '12×18 in', '16×24 in', '24×36 in' — in clean readable text; no other overlays, no watermarks.\nAvoid: watermarks, tilted or perspective-distorted canvases, mismatched lighting between canvases, official sports logos"
         }
       ]
     },
@@ -116,9 +116,196 @@
         {
           "slot": "image_5",
           "kind": "listing-support",
-          "filename": "pets_05_gift_scenario.png",
-          "hook": "Giftable for birthdays, holidays, pet parents.",
-          "prompt": "Use case: ads-marketing\nAsset type: TikTok Shop secondary product image\nPrimary request: Create a gift scenario image for a personalized pet portrait canvas.\nScene/backdrop: bright kitchen or living room table with simple gift wrap and ribbon, cheerful natural light.\nSubject: a custom canvas portrait of a cute dog beside a gift box, pet owner hands presenting it as a meaningful gift.\nComposition: square 1:1, product front-facing and clear, gift context obvious, clean premium look.\nStyle: photorealistic ecommerce lifestyle image, warm and joyful.\nText policy: no overlay text, no watermark."
+          "filename": "pets_05_size_chart.png",
+          "hook": "Size comparison chart — helps buyers pick the right canvas size for their wall.",
+          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop size comparison chart\nPrimary request: Create a clean, accurate size comparison display showing four canvas sizes for a pet portrait product line.\nScene/backdrop: bright white or very light neutral wall, identical consistent camera angle and lighting for all four canvases — same eye-level straight-on perspective with no distortion or tilt.\nSubject: four rectangular stretched canvases arranged in a horizontal row in ascending size order, each showing a different pet portrait (a golden retriever, a tabby cat, a beagle, and a mixed-breed dog). Canvases are: 8×12 in (smallest, leftmost), 12×18 in, 16×24 in, 24×36 in (largest, rightmost). Each canvas must have its size label in clean sans-serif text directly below it.\nA ceramic mug on a small shelf near the 8×12 canvas provides a real-world scale anchor.\nComposition: square 1:1, all four canvases share the same wall, same height baseline, consistent spacing between them, size labels clearly legible.\nStyle: realistic interior product photography, bright even lighting across all canvases, professional neutral aesthetic, premium quality.\nText policy: size labels only — '8×12 in', '12×18 in', '16×24 in', '24×36 in' — in clean readable text beneath each canvas; no other overlays, no watermarks.\nAvoid: watermarks, perspective distortion, mismatched angles between canvases, dramatically different lighting on different canvases, cluttered backgrounds"
+        }
+      ]
+    },
+    {
+      "id": "pets_original",
+      "display_name": "Pets – Original Photo Print",
+      "positioning": "Customer uploads their pet photo; we print it as-is on premium canvas. Sells on photo quality, color accuracy, and canvas texture.",
+      "compliance_notes": [
+        "Do not show a specific customer's real photo — use a generic stock-looking pet photo as the example.",
+        "Emphasize print resolution and color fidelity, not AI transformation."
+      ],
+      "assets": [
+        {
+          "slot": "main_image",
+          "kind": "listing-compliant",
+          "filename": "pets_orig_01_main_canvas.png",
+          "hook": "Premium print-quality canvas — the product speaks for itself.",
+          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop main product image\nPrimary request: Create a clean ecommerce product image for INKERASTORY original pet photo canvas print.\nScene/backdrop: pure white studio background, soft shadow under canvas only.\nSubject: one rectangular stretched canvas showing a crisp, photorealistic high-resolution print of a golden retriever looking at the camera; the print quality must look professional — sharp fur detail, accurate warm tones, true-to-life colors.\nComposition: square 1:1, canvas fills 85% of frame, slight side depth visible.\nStyle: premium ecommerce photography, bright clean light, emphasize realistic print texture.\nText policy: no overlay text, no watermark.\nAvoid: watermarks, distorted hands, messy backgrounds, AI-stylized or painted look — this must look like a real photograph printed on canvas"
+        },
+        {
+          "slot": "image_2",
+          "kind": "viral-creative",
+          "filename": "pets_orig_02_print_quality.png",
+          "hook": "Close-up detail shot — shows print resolution and canvas texture.",
+          "prompt": "Use case: ads-marketing\nAsset type: TikTok Shop secondary image — product detail close-up\nPrimary request: Create a macro close-up image showing the premium print quality of a pet photo canvas.\nScene/backdrop: white or very light neutral surface, angled lighting to show canvas weave.\nSubject: extreme close-up of a stretched canvas corner showing: (1) realistic dog fur printed in high resolution, (2) visible canvas texture weave beneath the print, (3) the wooden frame edge wrap.\nComposition: square 1:1, fill frame with the close-up detail, slightly angled for depth.\nStyle: premium product photography macro shot, sharp focus, high contrast.\nText policy: no overlay text, no watermark.\nAvoid: blurry images, watermarks, AI-painted or illustrated look"
+        },
+        {
+          "slot": "image_3",
+          "kind": "viral-creative",
+          "filename": "pets_orig_03_how_it_works.png",
+          "hook": "Simple 3-step 'How It Works' visual — builds buyer confidence.",
+          "prompt": "Use case: ads-marketing\nAsset type: TikTok Shop infographic-style image showing the order process\nPrimary request: Create a clean, minimal 3-step process image: Upload Photo → We Print → You Receive.\nScene/backdrop: white background, clean modern layout.\nSubject: three panels in a horizontal flow: (1) a phone showing a pet photo, (2) a printing machine or canvas being produced, (3) a smiling person receiving a packaged canvas delivery.\nComposition: square 1:1, three equal panels with arrows between them, very clear visual hierarchy.\nStyle: clean infographic illustration style, friendly and modern, soft colors.\nText policy: very simple short labels only — 'Upload', 'We Print', 'You Receive' — minimal readable text allowed.\nAvoid: watermarks, complex text, stock photo clichés, distorted hands"
+        },
+        {
+          "slot": "image_4",
+          "kind": "listing-support",
+          "filename": "pets_orig_04_room_mockup.png",
+          "hook": "Room mockup showing scale and placement in a real home.",
+          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop room mockup\nPrimary request: Create a bright modern living room mockup with a pet photo canvas on the wall.\nScene/backdrop: bright Scandinavian-style living room, white walls, minimal decor.\nSubject: a large canvas with a photorealistic print of a golden retriever hanging above a light-colored sofa.\nComposition: square 1:1, canvas is the focal point, room provides scale context.\nStyle: premium interior photography, warm and inviting, realistic proportions.\nText policy: no overlay text, no watermark.\nAvoid: watermarks, AI-painted or illustrated style on the canvas — must look like a real photo print"
+        },
+        {
+          "slot": "image_5",
+          "kind": "listing-support",
+          "filename": "pets_orig_05_size_chart.png",
+          "hook": "Size chart — shows four sizes of the photo print canvas in a real room setting.",
+          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop size comparison chart\nPrimary request: Create a clean size comparison wall display for a pet photo-print canvas product line.\nScene/backdrop: bright white or very light neutral wall, identical consistent camera angle — straight-on, eye-level, no tilt or perspective distortion across canvases.\nSubject: four rectangular stretched canvases in ascending size order in a horizontal row, each showing a photorealistic dog or cat photo printed on canvas (NOT illustrated or AI-painted — must look like a real photo print). Sizes: 8×12 in (left), 12×18 in, 16×24 in, 24×36 in (right). Each canvas has its size label in clean sans-serif text below it.\nA ceramic mug on a shelf near the smallest canvas gives a real-world scale reference.\nComposition: square 1:1, all canvases on the same wall, same baseline, even spacing, labels clearly readable.\nStyle: realistic product photography, bright even lighting, premium neutral aesthetic.\nText policy: size labels only — '8×12 in', '12×18 in', '16×24 in', '24×36 in' — no other overlays, no watermarks.\nAvoid: watermarks, illustrated or AI-painted style on canvas prints, tilted canvases, mismatched lighting"
+        }
+      ]
+    },
+    {
+      "id": "pets_royal",
+      "display_name": "Pets – Royal Portrait (AI)",
+      "positioning": "Customer uploads pet photo; AI transforms it into a regal oil-painting-style royal portrait, then printed on premium canvas.",
+      "compliance_notes": [
+        "No copyright-infringing crowns or heraldry from real royal families.",
+        "Use generic regal regalia — velvet, gold tones, classical oil-painting style.",
+        "Show the canvas as a physical printed product, not a digital image."
+      ],
+      "assets": [
+        {
+          "slot": "main_image",
+          "kind": "listing-compliant",
+          "filename": "pets_royal_01_main.png",
+          "hook": "Hero product shot — royal portrait canvas on clean white background.",
+          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop main product image\nPrimary request: Create a premium ecommerce product image for an AI royal portrait pet canvas.\nScene/backdrop: pure white studio background, soft shadow under the canvas only, no props.\nSubject: one rectangular stretched canvas showing an AI-generated royal oil-painting portrait of a golden retriever — the dog wears a velvet cloak and a simple gold crown, painted in rich classical oil portrait style with warm amber and deep burgundy tones, visible canvas texture.\nComposition: square 1:1, canvas fills 85% of frame, front angle with slight edge depth visible.\nStyle: premium ecommerce photography, bright clean light, canvas texture clearly visible.\nText policy: no overlay text, no watermark, no platform UI.\nAvoid: watermarks, copyright logos, photorealistic style (must look like an oil painting), real celebrity or royal likenesses, distorted anatomy"
+        },
+        {
+          "slot": "image_2",
+          "kind": "viral-creative",
+          "filename": "pets_royal_02_before_after.png",
+          "hook": "Before / After — the most scroll-stopping hook for AI transformation.",
+          "prompt": "Use case: ads-marketing\nAsset type: TikTok Shop before-and-after comparison image\nPrimary request: Create a split-panel image showing the AI royal portrait transformation: casual pet photo → royal portrait canvas.\nScene/backdrop: clean white background, subtle vertical dividing line between two panels.\nLeft panel: a casual-looking smartphone photo of a golden retriever, slightly informal, natural lighting — representing a customer upload. Small label \"Your Photo\" at top.\nRight panel: a rectangular canvas on a wooden easel showing the same dog transformed into a royal oil portrait (velvet cloak, gold crown, warm amber tones). Small label \"Your Canvas\" at top.\nComposition: square 1:1, two equal panels side by side, clear visual contrast between casual photo and premium artwork.\nStyle: clean product photography for right panel, realistic snapshot feel for left panel.\nText policy: minimal — \"Your Photo\" and \"Your Canvas\" labels only.\nAvoid: watermarks, complex text, distorted proportions, celebrity likenesses"
+        },
+        {
+          "slot": "image_3",
+          "kind": "viral-creative",
+          "filename": "pets_royal_03_lifestyle.png",
+          "hook": "Owner holding the royal portrait — gift-giving emotion.",
+          "prompt": "Use case: ads-marketing\nAsset type: TikTok Shop lifestyle secondary image\nPrimary request: Create a warm lifestyle image of a pet owner holding a royal portrait canvas of their pet.\nScene/backdrop: cozy warm living room, soft daylight, neutral home decor.\nSubject: a smiling person holding a canvas showing a royal oil-painting style portrait of their dog; the real dog sits nearby looking at the canvas. The canvas artwork is clearly the royal portrait style — velvet, crown, oil-painting feel.\nComposition: square 1:1, canvas and dog are the focal points, person shows genuine happy emotion.\nStyle: photorealistic warm lifestyle photography, premium home decor mood, giftable.\nText policy: no overlay text, no watermark.\nAvoid: watermarks, distorted hands, celebrity likenesses, too-perfect stock photo feel"
+        },
+        {
+          "slot": "image_4",
+          "kind": "listing-support",
+          "filename": "pets_royal_04_room_mockup.png",
+          "hook": "Room mockup — royal portrait elevating the home aesthetic.",
+          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop room mockup\nPrimary request: Create an elegant room mockup with a royal portrait pet canvas as the centerpiece.\nScene/backdrop: sophisticated living room with dark accent wall, warm lighting, velvet sofa, subtle gold frame accents on other wall art.\nSubject: a large rectangular canvas showing a royal oil-painting portrait of a dog in regal attire, displayed prominently above a console table or fireplace mantel.\nComposition: square 1:1, canvas is the centerpiece, room provides premium lifestyle context.\nStyle: luxury interior photography, warm dramatic lighting, editorial feel.\nText policy: no overlay text, no watermark.\nAvoid: watermarks, too-cluttered room, copyright logos"
+        },
+        {
+          "slot": "image_5",
+          "kind": "listing-support",
+          "filename": "pets_royal_05_size_chart.png",
+          "hook": "Size chart for the Royal Portrait canvas — classical aesthetic size comparison.",
+          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop size comparison chart\nPrimary request: Create an elegant size comparison display for a royal portrait pet canvas product line.\nScene/backdrop: bright off-white or warm cream wall, classical interior feel, consistent straight-on eye-level camera angle for all four canvases — identical perspective, no tilt or distortion.\nSubject: four rectangular stretched canvases in ascending size order in a horizontal row, each showing an AI royal oil-painting portrait of a different dog (velvet cloak, gold crown, classical warm amber tones). Sizes: 8×12 in (left), 12×18 in, 16×24 in, 24×36 in (right). Each canvas has its size label in elegant serif text below it.\nA decorative candlestick or small vase near the smallest canvas provides a real-world scale reference.\nComposition: square 1:1, all four canvases on the same wall at the same baseline, even spacing, size labels clearly readable.\nStyle: premium classical interior photography, warm consistent lighting across all four canvases.\nText policy: size labels only — '8×12 in', '12×18 in', '16×24 in', '24×36 in' — no other overlays, no watermarks.\nAvoid: watermarks, photorealistic photo-print style (must look like oil paintings), perspective distortion, mismatched lighting between canvases"
+        }
+      ]
+    },
+    {
+      "id": "pets_anime",
+      "display_name": "Pets – Anime / Kawaii (AI)",
+      "positioning": "Customer uploads pet photo; AI transforms it into a cute anime or kawaii illustration style, then printed on premium canvas.",
+      "compliance_notes": [
+        "Use original anime/kawaii illustration style — no specific IP characters (no Pikachu, no Disney, no existing anime characters).",
+        "Style should be kawaii/cute illustration, not a copy of any existing franchise.",
+        "Show the canvas as a physical printed product."
+      ],
+      "assets": [
+        {
+          "slot": "main_image",
+          "kind": "listing-compliant",
+          "filename": "pets_anime_01_main.png",
+          "hook": "Hero shot — anime pet canvas on white, irresistibly cute.",
+          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop main product image\nPrimary request: Create a premium ecommerce product image for an AI anime-style pet portrait canvas.\nScene/backdrop: pure white studio background, soft shadow under the canvas only.\nSubject: one rectangular stretched canvas showing an original kawaii anime-style illustration of a cat — large expressive sparkly eyes, soft pastel colors (pink, lavender, mint), cute chibi proportions, printed on canvas with visible texture. The art style is original kawaii illustration, not a copy of any franchise.\nComposition: square 1:1, canvas fills 85% of frame, front angle with slight edge depth.\nStyle: premium ecommerce photography, bright clean light, canvas texture visible.\nText policy: no overlay text, no watermark, no platform UI.\nAvoid: watermarks, copyrighted IP characters, Pikachu or any franchise characters, distorted anatomy, photorealistic style"
+        },
+        {
+          "slot": "image_2",
+          "kind": "viral-creative",
+          "filename": "pets_anime_02_before_after.png",
+          "hook": "Real photo → anime magic — the transformation TikTok loves.",
+          "prompt": "Use case: ads-marketing\nAsset type: TikTok Shop before-and-after comparison image\nPrimary request: Create a split-panel image showing the AI anime transformation: real pet photo → anime canvas.\nScene/backdrop: clean white background, subtle vertical dividing line between two panels.\nLeft panel: a natural-looking photo of a tabby cat, casual snapshot feel — representing a customer upload. Small label \"Your Photo\" at top.\nRight panel: a rectangular canvas on a stand showing the same cat transformed into an original kawaii anime illustration — big sparkling eyes, soft pastel colors, cute style. Small label \"Your Canvas\" at top.\nComposition: square 1:1, two equal panels, clear visual contrast between realistic photo and cute anime art.\nStyle: casual snapshot feel for left, premium product photo for right.\nText policy: minimal — \"Your Photo\" and \"Your Canvas\" only.\nAvoid: watermarks, copyrighted characters, distorted proportions"
+        },
+        {
+          "slot": "image_3",
+          "kind": "viral-creative",
+          "filename": "pets_anime_03_lifestyle.png",
+          "hook": "Fan reaction — the delight of seeing your pet as anime art.",
+          "prompt": "Use case: ads-marketing\nAsset type: TikTok Shop lifestyle secondary image\nPrimary request: Create a fun lifestyle image of a young pet owner delighted by their anime pet canvas.\nScene/backdrop: bright modern bedroom or living room, colorful aesthetic decor, plants, fairy lights.\nSubject: a young person smiling broadly, holding up a canvas showing their cat in kawaii anime style; the real cat is nearby on a shelf or bed, seemingly posing. Very cheerful, youthful energy.\nComposition: square 1:1, canvas is prominent, human joy is the emotional hook.\nStyle: bright, colorful, authentic lifestyle photography — not overly staged.\nText policy: no overlay text, no watermark.\nAvoid: watermarks, copyrighted IP characters, distorted hands"
+        },
+        {
+          "slot": "image_4",
+          "kind": "listing-support",
+          "filename": "pets_anime_04_room_mockup.png",
+          "hook": "Room mockup — anime art in a modern aesthetic space.",
+          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop room mockup\nPrimary request: Create a modern aesthetic room mockup with an anime pet canvas as the focal point.\nScene/backdrop: bright modern room with pastel or neutral walls, aesthetic desk setup or gallery wall, fairy lights, plants.\nSubject: a rectangular canvas showing an original kawaii anime-style illustration of a cat, displayed on a gallery wall or propped on a shelf.\nComposition: square 1:1, canvas is prominent, room gives personality and scale context.\nStyle: modern aesthetic/cottagecore photography, bright and cheerful, inviting.\nText policy: no overlay text, no watermark.\nAvoid: watermarks, copyrighted characters, cluttered room"
+        },
+        {
+          "slot": "image_5",
+          "kind": "listing-support",
+          "filename": "pets_anime_05_size_chart.png",
+          "hook": "Size chart for the Anime Pet canvas — cute aesthetic size comparison.",
+          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop size comparison chart\nPrimary request: Create a cute, cheerful size comparison display for an anime pet canvas product line.\nScene/backdrop: bright pastel or white wall, modern aesthetic room setting, consistent straight-on eye-level camera angle for all four canvases — identical perspective, no distortion or tilt.\nSubject: four rectangular stretched canvases in ascending size order in a horizontal row, each showing an original kawaii anime-style illustration of a different pet (cats and dogs, big expressive eyes, pastel colors, no copyrighted characters). Sizes: 8×12 in (left), 12×18 in, 16×24 in, 24×36 in (right). Each canvas has its size label in a clean, modern sans-serif font below it.\nA small succulent plant or cute mug near the smallest canvas provides a real-world scale anchor.\nComposition: square 1:1, all canvases on the same wall at the same baseline, consistent spacing, labels clearly readable.\nStyle: bright cheerful product photography, soft even lighting, modern aesthetic.\nText policy: size labels only — '8×12 in', '12×18 in', '16×24 in', '24×36 in' — no other overlays, no watermarks.\nAvoid: watermarks, copyrighted anime characters, photorealistic style on the canvas prints, perspective distortion, mismatched lighting"
+        }
+      ]
+    },
+    {
+      "id": "people",
+      "display_name": "Family & Portrait Memories",
+      "positioning": "Evergreen gift angle for families, couples, weddings, and milestone portrait moments.",
+      "compliance_notes": [
+        "Use generic-looking people only — no celebrity or public figure likenesses.",
+        "Show the canvas as a premium printed wall art product, not just a digital portrait.",
+        "Avoid recognizable real faces on the canvas; use artistic or softly rendered portrait representations."
+      ],
+      "assets": [
+        {
+          "slot": "main_image",
+          "kind": "listing-compliant",
+          "filename": "people_01_main_clean_canvas.png",
+          "hook": "A clean product-first image for the listing main image.",
+          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop main product image\nPrimary request: Create a clean ecommerce product image for INKERASTORY personalized portrait canvas wall art.\nScene/backdrop: pure white studio background, soft shadow only under the physical canvas, no clutter.\nSubject: one rectangular stretched canvas showing a beautiful custom portrait of a couple or small family, warm artistic rendering, printed on premium canvas with visible edge depth.\nComposition: square 1:1, product centered, canvas fills about 85% of frame, front angle with slight side depth.\nStyle: premium ecommerce photography, bright clean light, high-resolution realistic canvas texture.\nText policy: no overlay text, no watermark, no platform UI.\nAvoid: watermarks, QR codes, platform UI, distorted hands, celebrity likenesses, recognizable real public figures, copyrighted characters"
+        },
+        {
+          "slot": "image_2",
+          "kind": "viral-creative",
+          "filename": "people_02_lifestyle_scene.png",
+          "hook": "Emotional lifestyle scene — product in the hands of a happy recipient.",
+          "prompt": "Use case: ads-marketing\nAsset type: TikTok Shop secondary product image / ad creative\nPrimary request: Create an emotional lifestyle image of a person receiving a personalized portrait canvas as a gift.\nScene/backdrop: warm bright living room, soft natural daylight, neutral home decor.\nSubject: a smiling person holding or unwrapping a custom canvas portrait of a couple or family; canvas clearly visible as the premium product.\nComposition: square 1:1, canvas is the focal point, human emotion visible and warm.\nStyle: photorealistic natural lifestyle photography, warm and giftable, premium home decor mood.\nText policy: no overlay text, no watermark.\nAvoid: watermarks, QR codes, platform UI, distorted hands, celebrity likenesses"
+        },
+        {
+          "slot": "image_3",
+          "kind": "viral-creative",
+          "filename": "people_03_gift_occasion.png",
+          "hook": "Wedding or anniversary gift angle — high emotion, high share value.",
+          "prompt": "Use case: ads-marketing\nAsset type: TikTok Shop secondary product image\nPrimary request: Create a tasteful wedding or anniversary gift scene for a custom portrait canvas.\nScene/backdrop: elegant setting with white flowers, soft candles, warm romantic light, neutral tones.\nSubject: a rectangular canvas showing a stylized couple portrait displayed upright on a table or wall; product is clear and premium.\nComposition: square 1:1, romantic celebratory mood, canvas centered with elegant surrounding decor.\nStyle: realistic lifestyle photography, soft and warm, luxurious gift aesthetic.\nText policy: no overlay text, no watermark, no readable dates or names.\nAvoid: watermarks, QR codes, platform UI, distorted hands, celebrity likenesses"
+        },
+        {
+          "slot": "image_4",
+          "kind": "listing-support",
+          "filename": "people_04_room_mockup.png",
+          "hook": "Shows how a family portrait transforms any living space.",
+          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop room mockup\nPrimary request: Create a modern room mockup for personalized family portrait canvas wall art.\nScene/backdrop: bright modern living room with a sofa, neutral tones, clean decor, soft daylight.\nSubject: a large rectangular custom canvas portrait of a couple or family hanging above the sofa, realistic canvas texture and edge depth.\nComposition: square 1:1, product large and centered, room gives scale but does not distract.\nStyle: premium interior photography, warm and sophisticated, realistic proportions.\nText policy: no overlay text, no watermark.\nAvoid: watermarks, QR codes, platform UI, distorted hands, celebrity likenesses"
+        },
+        {
+          "slot": "image_5",
+          "kind": "listing-support",
+          "filename": "people_05_size_chart.png",
+          "hook": "Size chart for portrait canvas — helps buyers choose the right size for their wall.",
+          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop size comparison chart\nPrimary request: Create a clean, warm size comparison display for a personalized portrait canvas product line.\nScene/backdrop: bright white or warm cream wall, modern home interior feel, consistent straight-on eye-level camera angle for all four canvases — identical perspective, no tilt or distortion across the row.\nSubject: four rectangular stretched canvases in ascending size order in a horizontal row, each showing a different couple or family portrait (generic softly-rendered faces, no celebrity likenesses, no specific recognizable people). Sizes: 8×12 in (left), 12×18 in, 16×24 in, 24×36 in (right). Each canvas has its size label in a clean sans-serif font below it.\nA ceramic mug or a small vase near the 8×12 canvas provides a real-world scale reference.\nComposition: square 1:1, all canvases on the same wall at the same baseline, even spacing, size labels clearly readable.\nStyle: premium lifestyle interior photography, bright warm consistent lighting across all canvases, sophisticated neutral aesthetic.\nText policy: size labels only — '8×12 in', '12×18 in', '16×24 in', '24×36 in' — no other overlays, no watermarks.\nAvoid: watermarks, celebrity or recognizable faces on canvases, perspective distortion, mismatched lighting, distorted proportions"
         }
       ]
     }

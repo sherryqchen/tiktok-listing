@@ -39,11 +39,12 @@ The World Cup-inspired prompts intentionally avoid official FIFA marks, official
 ## Generate Images With The Agent
 
 The image generation agent reads `data/image_workflows.json` and writes local image files plus a generation manifest.
+Each theme currently generates 5 listing images: `main_image`, `image_2`, `image_3`, `image_4`, and `image_5`.
 
-Put your API key in `.env`:
+Put your API key in `.env`. Gemini is the default image provider:
 
 ```bash
-OPENAI_API_KEY="your_api_key"
+GEMINI_API_KEY="your_gemini_api_key"
 ```
 
 `.env` is ignored by git. Keep `.env.example` as the shareable template.
@@ -51,17 +52,25 @@ OPENAI_API_KEY="your_api_key"
 Test the workflow without an API call:
 
 ```bash
+python3 scripts/image_generation_agent.py doctor
 python3 scripts/image_generation_agent.py generate --theme pets --dry-run
 python3 scripts/image_generation_agent.py generate --theme pets --mock --limit 1 --overwrite
 python3 scripts/image_generation_agent.py status --theme pets
 ```
 
-Generate real images with the OpenAI Image API:
+`--mock` only creates local placeholder PNGs so the visual workflow can be tested. It does not create real product-photo content.
+
+Generate real images with Gemini:
 
 ```bash
-export OPENAI_API_KEY="your_api_key"
-python3 scripts/image_generation_agent.py generate --theme pets --quality high --overwrite
-python3 scripts/image_generation_agent.py generate --theme world_cup --quality high --overwrite
+python3 scripts/image_generation_agent.py generate --theme pets --overwrite
+python3 scripts/image_generation_agent.py generate --theme world_cup --overwrite
+```
+
+To use the OpenAI Image API instead, add `OPENAI_API_KEY` to `.env` and pass `--provider openai`:
+
+```bash
+python3 scripts/image_generation_agent.py generate --provider openai --theme pets --quality high --overwrite
 ```
 
 Default output:
@@ -98,6 +107,21 @@ After generating images and uploading them to TikTok Media Center or another pub
 
 ```bash
 python3 scripts/apply_image_urls.py --urls data/image_urls.example.json
+python3 scripts/build_tiktok_bulk_upload.py
+```
+
+You can also paste TikTok Media Center URLs into a plain text file, one URL per line, in this order:
+
+1. `main_image`
+2. `image_2`
+3. `image_3`
+4. `image_4`
+5. `image_5`
+
+Then run:
+
+```bash
+python3 scripts/apply_image_urls.py --urls data/media_center_urls.example.txt
 python3 scripts/build_tiktok_bulk_upload.py
 ```
 

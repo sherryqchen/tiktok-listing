@@ -102,20 +102,3 @@ Style: premium interior photography, warm and sophisticated, realistic proportio
 Text policy: no overlay text, no watermark.
 Avoid: watermarks, QR codes, platform UI, distorted hands, tiny unreadable text, misleading scale, messy backgrounds, official sports logos, team crests, celebrity or athlete likenesses, copyrighted characters
 ```
-
-### image_5 - pets_05_gift_scenario.png
-
-Kind: `listing-support`
-Hook: Giftable for birthdays, holidays, pet parents.
-
-```text
-Use case: ads-marketing
-Asset type: TikTok Shop secondary product image
-Primary request: Create a gift scenario image for a personalized pet portrait canvas.
-Scene/backdrop: bright kitchen or living room table with simple gift wrap and ribbon, cheerful natural light.
-Subject: a custom canvas portrait of a cute dog beside a gift box, pet owner hands presenting it as a meaningful gift.
-Composition: square 1:1, product front-facing and clear, gift context obvious, clean premium look.
-Style: photorealistic ecommerce lifestyle image, warm and joyful.
-Text policy: no overlay text, no watermark.
-Avoid: watermarks, QR codes, platform UI, distorted hands, tiny unreadable text, misleading scale, messy backgrounds, official sports logos, team crests, celebrity or athlete likenesses, copyrighted characters
-```
