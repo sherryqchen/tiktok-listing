@@ -22,6 +22,15 @@ NS_MAIN = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
 NS_REL = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
 ET.register_namespace("", NS_MAIN)
 
+DEFAULT_ATTRS = {
+    "dangerous_goods": "No",
+    "other_dangerous_goods": "No",
+    "ca_prop65_repro_chems": "No",
+    "reprotoxic_chemicals": "",
+    "ca_prop65_carcinogens": "No",
+    "carcinogen": "",
+}
+
 
 def q(tag: str) -> str:
     return f"{{{NS_MAIN}}}{tag}"
@@ -91,55 +100,79 @@ def find_template_sheet_path(xlsx_path: Path) -> str:
     raise RuntimeError("Could not find a sheet named Template in the workbook.")
 
 
-def build_rows(config: dict) -> list[dict[str, object]]:
-    listing = config["listing"]
-    attrs = listing["attributes"]
-    images = listing["images"]
+def normalize_config(config: dict) -> dict:
+    if "listings" in config:
+        normalized = copy.deepcopy(config)
+    else:
+        normalized = {
+            "template_path": config.get("template_path", "input_template.xlsx"),
+            "output_path": config.get("output_path", "outputs/inkerastory_tiktok_bulk_upload.xlsx"),
+            "active_listing_id": config.get("active_listing_id", "item_1"),
+            "listings": [
+                {
+                    "id": config.get("active_listing_id", "item_1"),
+                    "theme_id": config.get("theme_id", "pets"),
+                    "listing": config.get("listing", {}),
+                    "skus": config.get("skus", []),
+                }
+            ],
+        }
+    if not normalized.get("listings"):
+        raise ValueError("Config must include at least one listing.")
+    if not normalized.get("active_listing_id"):
+        normalized["active_listing_id"] = normalized["listings"][0].get("id", "item_1")
+    return normalized
+
+
+def build_listing_rows(item: dict) -> list[dict[str, object]]:
+    listing = item["listing"]
+    attrs = {**DEFAULT_ATTRS, **listing.get("attributes", {})}
+    images = listing.get("images", {})
     rows = []
-    for sku in config["skus"]:
-        is_print = sku["type"].lower().startswith("print")
-        material = attrs["material_print"] if is_print else attrs["material_canvas"]
+    for sku in item["skus"]:
         row = {
-            "A": listing["category"],
-            "B": listing["brand"],
-            "C": listing["product_name"],
-            "D": listing["product_description"],
-            "E": images.get("main_image", ""),
-            "F": images.get("image_2", ""),
-            "G": images.get("image_3", ""),
-            "H": images.get("image_4", ""),
-            "I": images.get("image_5", ""),
-            "P": listing["variation_1_name"],
-            "Q": sku["type"],
-            "AA": listing["variation_2_name"],
+            "A":  listing.get("category", "Home Decor/Posters & Prints/Prints"),
+            "B":  listing.get("brand", "No brand"),
+            "C":  listing["product_name"],
+            "D":  listing["product_description"],
+            "E":  images.get("main_image", ""),
+            "F":  images.get("image_2", ""),
+            "G":  images.get("image_3", ""),
+            "H":  images.get("image_4", ""),
+            "I":  images.get("image_5", ""),
+            "J":  images.get("image_6", ""),
+            "P":  listing.get("variation_1_name", "Type"),
+            "Q":  sku["type"],
+            "AA": listing.get("variation_2_name", "Size"),
             "AB": sku["size"],
             "AC": sku["weight_lb"],
             "AD": sku["length_in"],
             "AE": sku["width_in"],
             "AF": sku["height_in"],
-            "AG": listing["delivery"],
+            "AG": listing.get("delivery", "Default"),
             "AH": f"{sku['price']:.2f}",
-            "AJ": listing["warehouse_quantity_1"],
-            "AK": listing["warehouse_quantity_2"],
+            "AJ": listing.get("warehouse_quantity_1", 100),
+            "AK": listing.get("warehouse_quantity_2", 0),
             "AL": sku["seller_sku"],
-            "AP": attrs["pattern"],
-            "AQ": attrs["occasion"],
-            "AR": attrs["style"],
-            "AS": attrs["feature"],
-            "AT": attrs["shape"],
-            "AV": material,
-            "AW": attrs["setting"],
-            "AX": attrs["use"],
-            "AY": attrs["installment"],
-            "AZ": attrs["dangerous_goods"],
-            "BA": attrs["other_dangerous_goods"],
-            "BB": attrs["ca_prop65_repro_chems"],
-            "BC": attrs["reprotoxic_chemicals"],
-            "BD": attrs["ca_prop65_carcinogens"],
-            "BE": attrs["carcinogen"],
-            "BH": listing["status"],
+            # AP-AU: Dangerous goods compliance (template columns AP-AU)
+            "AP": attrs["dangerous_goods"],
+            "AQ": attrs["other_dangerous_goods"],
+            "AR": attrs["ca_prop65_repro_chems"],
+            "AS": attrs["reprotoxic_chemicals"],
+            "AT": attrs["ca_prop65_carcinogens"],
+            "AU": attrs["carcinogen"],
+            # AV-AW are SDS document upload fields — left empty, handled in Seller Center
+            # AX: Product Status
+            "AX": listing.get("status", "Draft(2)"),
         }
         rows.append(row)
+    return rows
+
+
+def build_rows(config: dict) -> list[dict[str, object]]:
+    rows: list[dict[str, object]] = []
+    for item in normalize_config(config)["listings"]:
+        rows.extend(build_listing_rows(item))
     return rows
 
 
@@ -175,7 +208,7 @@ def rewrite_template_sheet(sheet_path: Path, rows_to_write: list[dict[str, objec
             re.match(r"[A-Z]+", cell.attrib["r"]).group(0): cell
             for cell in new_row.findall(q("c"))
         }
-        for col_index in range(1, 61):
+        for col_index in range(1, 51):  # A(1) through AX(50)
             col = column_name(col_index)
             cell = cells_by_col.get(col)
             if cell is None:
@@ -190,7 +223,7 @@ def rewrite_template_sheet(sheet_path: Path, rows_to_write: list[dict[str, objec
 
     dimension = root.find(q("dimension"))
     if dimension is not None:
-        dimension.attrib["ref"] = f"A1:BH{max(product_end, 6)}"
+        dimension.attrib["ref"] = f"A1:AX{max(product_end, 6)}"
 
     tree.write(sheet_path, encoding="UTF-8", xml_declaration=True)
 
@@ -212,12 +245,23 @@ def repack_xlsx(workdir: Path, output_path: Path) -> None:
 
 def validate_config(config: dict) -> list[str]:
     warnings = []
-    images = config["listing"].get("images", {})
-    for key, value in images.items():
-        if "example.com/replace" in value:
-            warnings.append(f"{key} is still a placeholder image URL: {value}")
-    if config["listing"].get("brand") == "INKERASTORY":
-        warnings.append("Brand INKERASTORY must exist/validate in TikTok Seller Center; this template only listed No brand.")
+    seen_skus: dict[str, str] = {}
+    for item in normalize_config(config)["listings"]:
+        label = item.get("listing", {}).get("product_name") or item.get("id", "listing")
+        for sku in item.get("skus", []):
+            seller_sku = sku.get("seller_sku")
+            if not seller_sku:
+                continue
+            if seller_sku in seen_skus:
+                warnings.append(f"{label}: duplicate seller SKU {seller_sku} also used by {seen_skus[seller_sku]}")
+            else:
+                seen_skus[seller_sku] = label
+        images = item.get("listing", {}).get("images", {})
+        for key, value in images.items():
+            if "example.com/replace" in value:
+                warnings.append(f"{label}: {key} is still a placeholder image URL: {value}")
+        if item.get("listing", {}).get("brand") == "INKERASTORY":
+            warnings.append(f"{label}: Brand INKERASTORY must exist/validate in TikTok Seller Center; this template only listed No brand.")
     return warnings
 
 
@@ -227,7 +271,7 @@ def main() -> int:
     args = parser.parse_args()
 
     config_path = Path(args.config)
-    config = json.loads(config_path.read_text(encoding="utf-8"))
+    config = normalize_config(json.loads(config_path.read_text(encoding="utf-8")))
     template_path = Path(config["template_path"])
     output_path = Path(config["output_path"])
     rows_to_write = build_rows(config)

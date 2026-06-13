@@ -1,27 +1,27 @@
 {
-  "created_at": "2026-06-11T16:25:47Z",
+  "created_at": "2026-06-13T04:36:40Z",
   "mode": "live",
   "assets": [
     {
       "theme_id": "pets",
-      "slot": "image_5",
+      "slot": "image_6",
       "kind": "listing-support",
-      "filename": "pets_05_size_chart.png",
-      "output_path": "outputs/generated_images/pets/pets_05_size_chart.png",
+      "filename": "pets_06_print_flatlay.png",
+      "output_path": "outputs/generated_images/pets/pets_06_print_flatlay.png",
       "model": "gpt-image-1.5",
       "provider": "openai",
       "size": "1024x1024",
       "quality": "medium",
       "output_format": "png",
-      "prompt": "Use case: product-mockup\nAsset type: TikTok Shop size comparison chart\nPrimary request: Create a clean, accurate size comparison display showing four canvas sizes for a pet portrait product line.\nScene/backdrop: bright white or very light neutral wall, identical consistent camera angle and lighting for all four canvases — same eye-level straight-on perspective with no distortion or tilt.\nSubject: four rectangular stretched canvases arranged in a horizontal row in ascending size order, each showing a different pet portrait (a golden retriever, a tabby cat, a beagle, and a mixed-breed dog). Canvases are: 8×12 in (smallest, leftmost), 12×18 in, 16×24 in, 24×36 in (largest, rightmost). Each canvas must have its size label in clean sans-serif text directly below it.\nA ceramic mug on a small shelf near the 8×12 canvas provides a real-world scale anchor.\nComposition: square 1:1, all four canvases share the same wall, same height baseline, consistent spacing between them, size labels clearly legible.\nStyle: realistic interior product photography, bright even lighting across all canvases, professional neutral aesthetic, premium quality.\nText policy: size labels only — '8×12 in', '12×18 in', '16×24 in', '24×36 in' — in clean readable text beneath each canvas; no other overlays, no watermarks.\nAvoid: watermarks, perspective distortion, mismatched angles between canvases, dramatically different lighting on different canvases, cluttered backgrounds\nAvoid: watermarks, QR codes, platform UI, distorted hands, tiny unreadable text, misleading scale, messy backgrounds, official sports logos, team crests, celebrity or athlete likenesses, copyrighted characters",
+      "prompt": "Use case: product-mockup\nAsset type: TikTok Shop secondary product image — Print Only flat mockup\nPrimary request: Create a clean product image showing an INKERASTORY custom pet portrait as a flat unframed art print.\nScene/backdrop: white marble or light wood surface, slight-angle flat-lay, minimal clean styling with a small plant or mug for scale.\nSubject: one flat unframed matte art print showing a custom dog and cat portrait, clean white border, no frame, no canvas stretcher bars — clearly a paper print.\nComposition: square 1:1, print centered, soft shadow under the paper edges showing it is flat and thin.\nStyle: premium flat-lay product photography, bright natural light, matte paper finish clearly visible — not a canvas, no 3D depth, no wrapped edges.\nText policy: no overlay text, no watermark.\nAvoid: canvas texture, stretcher bars, frame, 3D gallery-wrap depth, watermarks, platform UI",
       "status": "generated",
-      "openai_request_id": "req_d6e546eb003d4a31bf6ee0ea23fd520e",
-      "client_request_id": "inkerastory-image-agent-b02e0513-429a-47e0-936c-e1922a29ddc1",
+      "openai_request_id": "req_97db7008852d47d996481e252e1b04f8",
+      "client_request_id": "inkerastory-image-agent-dfe85d63-ec53-4fda-abaa-f100a1605396",
       "revised_prompt": null,
       "validation": {
         "exists": true,
-        "path": "outputs/generated_images/pets/pets_05_size_chart.png",
-        "bytes": 705627,
+        "path": "outputs/generated_images/pets/pets_06_print_flatlay.png",
+        "bytes": 1662500,
         "dimensions": [
           1024,
           1024

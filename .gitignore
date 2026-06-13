@@ -5,3 +5,6 @@ __pycache__/
 *.pyc
 .DS_Store
 
+# Generated outputs
+outputs/generated_images/
+outputs/inkerastory_tiktok_bulk_upload.xlsx

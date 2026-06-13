@@ -17,6 +17,7 @@ import json
 import os
 import struct
 import time
+import ssl
 import urllib.error
 import urllib.request
 import uuid
@@ -26,6 +27,14 @@ from pathlib import Path
 from typing import Any
 
 from build_image_prompt_pack import build_manifest, load_config, selected_themes
+
+
+def _ssl_context() -> ssl.SSLContext:
+    try:
+        import certifi
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        return ssl.create_default_context()
 
 
 DEFAULT_CONFIG = Path("data/image_workflows.json")
@@ -157,7 +166,7 @@ def request_openai_image(asset: dict[str, Any], options: GenerationOptions) -> t
     )
 
     try:
-        with urllib.request.urlopen(request, timeout=options.timeout) as response:
+        with urllib.request.urlopen(request, timeout=options.timeout, context=_ssl_context()) as response:
             response_data = json.loads(response.read().decode("utf-8"))
             response_request_id = response.headers.get("x-request-id")
     except urllib.error.HTTPError as error:
@@ -205,7 +214,7 @@ def request_gemini_image(asset: dict[str, Any], options: GenerationOptions) -> t
     )
 
     try:
-        with urllib.request.urlopen(request, timeout=options.timeout) as response:
+        with urllib.request.urlopen(request, timeout=options.timeout, context=_ssl_context()) as response:
             response_data = json.loads(response.read().decode("utf-8"))
     except urllib.error.HTTPError as error:
         body = error.read().decode("utf-8", errors="replace")

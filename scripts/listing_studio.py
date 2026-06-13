@@ -66,11 +66,77 @@ def save_workflow_config(config: dict[str, Any]) -> None:
 
 
 def load_listing_config() -> dict[str, Any]:
-    return json.loads(LISTING_PATH.read_text(encoding="utf-8"))
+    return normalize_listing_config(json.loads(LISTING_PATH.read_text(encoding="utf-8")))
 
 
 def save_listing_config(config: dict[str, Any]) -> None:
-    LISTING_PATH.write_text(json.dumps(config, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    LISTING_PATH.write_text(json.dumps(normalize_listing_config(config), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def normalize_listing_config(config: dict[str, Any]) -> dict[str, Any]:
+    if "listings" not in config:
+        config = {
+            "template_path": config.get("template_path", "input_template.xlsx"),
+            "output_path": config.get("output_path", "outputs/inkerastory_tiktok_bulk_upload.xlsx"),
+            "active_listing_id": config.get("active_listing_id", "item_1"),
+            "listings": [
+                {
+                    "id": config.get("active_listing_id", "item_1"),
+                    "theme_id": config.get("theme_id", "pets"),
+                    "listing": config.get("listing", {}),
+                    "skus": config.get("skus", []),
+                }
+            ],
+        }
+
+    listings = config.setdefault("listings", [])
+    used_prefixes: set[str] = set()
+    for index, item in enumerate(listings, start=1):
+        item.setdefault("id", f"item_{index}")
+        item.setdefault("theme_id", "pets")
+        item["sku_prefix"] = _unique_sku_prefix(item.get("sku_prefix") or _infer_sku_prefix(item) or _base_sku_prefix(item["theme_id"]), used_prefixes)
+        used_prefixes.add(item["sku_prefix"])
+        item.setdefault("listing", {})
+        item.setdefault("skus", [])
+        item["listing"].setdefault("images", {})
+        item["listing"].setdefault("attributes", {})
+    if not listings:
+        listings.append({"id": "item_1", "theme_id": "pets", "listing": {"images": {}, "attributes": {}}, "skus": []})
+    active_id = config.get("active_listing_id")
+    if not active_id or not any(item["id"] == active_id for item in listings):
+        config["active_listing_id"] = listings[0]["id"]
+    config.setdefault("template_path", "input_template.xlsx")
+    config.setdefault("output_path", "outputs/inkerastory_tiktok_bulk_upload.xlsx")
+    return config
+
+
+def _base_sku_prefix(theme_id: str) -> str:
+    return {
+        "pets": "PET",
+        "pets_original": "ORG",
+        "pets_royal": "ROY",
+        "pets_anime": "ANI",
+        "people": "PPL",
+        "world_cup": "WC",
+    }.get(theme_id, "X")
+
+
+def _infer_sku_prefix(item: dict[str, Any]) -> str:
+    for sku in item.get("skus", []):
+        parts = str(sku.get("seller_sku", "")).split("-")
+        if len(parts) >= 3 and parts[1]:
+            return parts[1]
+    return ""
+
+
+def _unique_sku_prefix(prefix: str, used: set[str]) -> str:
+    if prefix not in used:
+        return prefix
+    base = prefix.rstrip("0123456789") or prefix
+    counter = 2
+    while f"{base}{counter}" in used:
+        counter += 1
+    return f"{base}{counter}"
 
 
 def read_generation_manifest() -> dict[str, Any] | None:
@@ -186,19 +252,54 @@ def run_generation(
     }
 
 
-def run_export() -> dict[str, Any]:
+def run_export(listing_ids: list[str] | None = None) -> dict[str, Any]:
+    import tempfile
+
     if not (ROOT / "input_template.xlsx").exists():
         return {"ok": False, "error": "input_template.xlsx missing from project root."}
-    result = subprocess.run(
-        [sys.executable, "scripts/build_tiktok_bulk_upload.py"],
-        cwd=ROOT, text=True, capture_output=True, timeout=120, check=False,
-    )
+
+    # If a selection is provided, write a temporary filtered config
+    tmp_path: str | None = None
+    if listing_ids is not None:
+        try:
+            config = load_listing_config()
+            filtered = [
+                item for item in config.get("listings", [])
+                if item.get("id") in listing_ids
+            ]
+            if not filtered:
+                return {"ok": False, "error": "No listings selected for export."}
+            config["listings"] = filtered
+            with tempfile.NamedTemporaryFile(
+                mode="w", suffix=".json", delete=False, encoding="utf-8"
+            ) as f:
+                json.dump(config, f, ensure_ascii=False)
+                tmp_path = f.name
+        except Exception as e:
+            return {"ok": False, "error": f"Failed to prepare config: {e}"}
+
+    cmd = [sys.executable, "scripts/build_tiktok_bulk_upload.py"]
+    if tmp_path:
+        cmd.extend(["--config", tmp_path])
+
+    try:
+        result = subprocess.run(cmd, cwd=ROOT, text=True, capture_output=True, timeout=120, check=False)
+    finally:
+        if tmp_path:
+            try:
+                Path(tmp_path).unlink()
+            except OSError:
+                pass
+
     if result.returncode != 0:
         return {"ok": False, "error": result.stderr or result.stdout}
     out = ROOT / "outputs" / "inkerastory_tiktok_bulk_upload.xlsx"
     if not out.exists():
         return {"ok": False, "error": "Build succeeded but output file not found."}
-    return {"ok": True, "path": str(out)}
+    import re as _re
+    m = _re.search(r"Wrote (\d+) SKU rows", result.stdout)
+    rows = int(m.group(1)) if m else 0
+    return {"ok": True, "path": str(out.relative_to(ROOT)), "rows": rows, "stdout": result.stdout}
 
 
 def build_images_zip(theme_id: str) -> tuple[str, bytes, int]:
@@ -397,6 +498,37 @@ button:disabled{opacity:.4;cursor:not-allowed!important}
   .workspace{grid-template-columns:1fr;overflow:visible}
   .panel{overflow:visible;border-right:none;border-bottom:1px solid var(--line)}
 }
+
+/* listing tabs */
+.ltab-bar{background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:stretch;
+          overflow-x:auto;flex-shrink:0;scrollbar-width:none}
+.ltab-bar::-webkit-scrollbar{display:none}
+.ltab{display:flex;align-items:center;gap:6px;padding:9px 14px;border:none;border-bottom:3px solid transparent;
+      background:none;cursor:pointer;white-space:nowrap;font:inherit;font-size:12px;font-weight:600;
+      color:var(--muted);border-radius:0;flex-shrink:0}
+.ltab:hover:not(.active){background:#f8fafc;color:var(--ink)}
+.ltab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.ltab-emoji{font-size:13px}
+.ltab-name{max-width:120px;overflow:hidden;text-overflow:ellipsis}
+.ltab-close{font-size:14px;line-height:1;color:var(--muted);opacity:.5;margin-left:2px}
+.ltab-close:hover{opacity:1;color:var(--danger)}
+.ltab-add{padding:9px 14px;border:none;background:none;cursor:pointer;font-size:18px;
+          color:var(--muted);font-weight:300;line-height:1;border-radius:0;flex-shrink:0}
+.ltab-add:hover{color:var(--accent);background:#f8fafc}
+.ltab-sep{width:1px;background:var(--line);margin:6px 0;flex-shrink:0}
+
+/* export listing summary */
+.exp-list{margin:8px 0 0}
+.exp-row{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:6px;
+         font-size:11px;border:1px solid var(--line);margin-bottom:5px;background:#fafafa}
+.exp-row.active-row{border-color:var(--accent);background:#eff6ff}
+.exp-row-icon{font-size:14px;flex-shrink:0}
+.exp-row-info{flex:1;min-width:0}
+.exp-row-name{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.exp-row-meta{color:var(--muted);font-size:10px;margin-top:1px}
+.exp-row-status{font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px}
+.exp-row-status.ok{background:#d1fae5;color:var(--ok)}
+.exp-row-status.warn{background:#fef3c7;color:var(--warn)}
 </style>
 </head>
 <body>
@@ -405,11 +537,17 @@ button:disabled{opacity:.4;cursor:not-allowed!important}
   <div class="pills" id="pills"></div>
 </header>
 
+<!-- listing tabs bar -->
+<div class="ltab-bar" id="listingTabs"></div>
+
 <div class="workspace">
 
 <!-- ══════════ Panel 1 — Listing Builder ══════════ -->
 <div class="panel">
-  <div class="ptitle">Listing Builder</div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <div class="ptitle" style="margin:0">Listing Detail</div>
+    <button class="sm" id="dupeListingBtn" title="Duplicate active listing">Duplicate</button>
+  </div>
 
   <div class="row2">
     <div class="field">
@@ -536,10 +674,22 @@ button:disabled{opacity:.4;cursor:not-allowed!important}
   </div>
 
   <div class="exp-box">
-    <div class="exp-box-title">Export &amp; Upload</div>
-    <button class="success" id="exportBtn">⬇ Export TikTok XLSX</button>
-    <button id="downloadImagesBtn">Download Current Images</button>
-    <div class="exp-status" id="expStatus"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div class="exp-box-title" style="margin:0">Export &amp; Upload</div>
+      <div style="display:flex;gap:8px">
+        <span style="font-size:11px;color:var(--accent);cursor:pointer" onclick="toggleAllExport(true)">Select all</span>
+        <span style="font-size:11px;color:var(--muted)">·</span>
+        <span style="font-size:11px;color:var(--muted);cursor:pointer" onclick="toggleAllExport(false)">None</span>
+      </div>
+    </div>
+    <div id="exportListingSummary" class="exp-list"></div>
+    <div style="display:flex;gap:6px;margin-top:9px">
+      <button class="success" id="exportBtn" style="flex:1">Build XLSX</button>
+      <button id="xlsxDownloadBtn" title="Download the last built XLSX file" disabled>⬇ Download</button>
+    </div>
+    <button id="downloadImagesBtn" style="width:100%;margin-top:5px">Download Current Images</button>
+    <div class="exp-status" id="expStatus" style="margin-top:6px"></div>
+    <div id="xlsxInfo" style="font-size:10px;color:var(--muted);margin-top:4px;min-height:14px"></div>
   </div>
 
   <div class="slabel">Image URLs (for production export)</div>
@@ -579,6 +729,8 @@ const SLOT_META = {
                 hint:'Shows scale in a real room — helps buyers visualise' },
   image_5:    { label:'Size Chart',                required:false,
                 hint:'4 canvases side-by-side (8×12 → 24×36) with size labels — helps buyers choose' },
+  image_6:    { label:'Print Only Mockup',         required:false,
+                hint:'Flat unframed print flat-lay — shows buyers what the poster/print version looks like' },
 };
 
 // Description templates keyed by theme_id
@@ -710,12 +862,129 @@ const DEFAULT_PRICES = {
   'Print Only':      {'8 x 12 in':14.98,'12 x 18 in':17.99,'16 x 24 in':26.99,'24 x 36 in':39.99},
   'Stretched Canvas':{'8 x 12 in':19.99,'12 x 18 in':29.99,'16 x 24 in':39.99,'24 x 36 in':50.99},
 };
+const DEFAULT_DIMS = {
+  'Print Only':      {weight_lb:.21,length_in:9.84, width_in:5.91, height_in:.79},
+  'Stretched Canvas':{weight_lb:.63,length_in:12.60,width_in:8.27, height_in:.79},
+};
+const THEME_SKU_PREFIX = {
+  pets:'PET',pets_original:'ORG',pets_royal:'ROY',pets_anime:'ANI',
+  people:'PPL',world_cup:'WC'
+};
 
 // ─── state ───────────────────────────────────────────────────────────────────
 let listing  = {};
 let imgState = {};
 let cImages  = [];
 let cIdx     = 0;
+
+function normalizeListingConfig(data) {
+  const cfg = data || {};
+  if (!Array.isArray(cfg.listings)) {
+    cfg.listings = [{
+      id: cfg.active_listing_id || 'item_1',
+      theme_id: cfg.theme_id || 'pets',
+      listing: cfg.listing || {},
+      skus: cfg.skus || [],
+    }];
+  }
+  if (!cfg.listings.length) {
+    cfg.listings.push({id:'item_1', theme_id:'pets', listing:{images:{}, attributes:{}}, skus:[]});
+  }
+  const usedPrefixes = new Set();
+  cfg.listings.forEach((item, idx)=>{
+    item.id = item.id || `item_${idx+1}`;
+    item.theme_id = item.theme_id || 'pets';
+    let prefix = item.sku_prefix || inferSkuPrefix(item) || baseSkuPrefix(item.theme_id);
+    if (usedPrefixes.has(prefix)) {
+      const base = baseSkuPrefix(item.theme_id);
+      let suffix = 2;
+      while (usedPrefixes.has(`${base}${suffix}`)) suffix += 1;
+      prefix = `${base}${suffix}`;
+    }
+    item.sku_prefix = prefix;
+    usedPrefixes.add(prefix);
+    item.listing = item.listing || {};
+    item.listing.images = item.listing.images || {};
+    item.listing.attributes = item.listing.attributes || {};
+    item.skus = item.skus || [];
+  });
+  if (!cfg.active_listing_id || !cfg.listings.some(item=>item.id===cfg.active_listing_id)) {
+    cfg.active_listing_id = cfg.listings[0].id;
+  }
+  cfg.template_path = cfg.template_path || 'input_template.xlsx';
+  cfg.output_path = cfg.output_path || 'outputs/inkerastory_tiktok_bulk_upload.xlsx';
+  return cfg;
+}
+
+function activeItem() {
+  listing = normalizeListingConfig(listing);
+  return listing.listings.find(item=>item.id===listing.active_listing_id) || listing.listings[0];
+}
+
+function activeListingData() {
+  return activeItem().listing || {};
+}
+
+function listingLabel(item, idx) {
+  const name = item.listing?.product_name?.trim();
+  return name ? name.slice(0, 64) : `Item ${idx+1}`;
+}
+
+function uniqueItemId() {
+  return `item_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,6)}`;
+}
+
+function baseSkuPrefix(themeId) {
+  return THEME_SKU_PREFIX[themeId] || 'X';
+}
+
+function inferSkuPrefix(item) {
+  const sku = item.skus?.find(row=>row.seller_sku)?.seller_sku || '';
+  const parts = sku.split('-');
+  return parts.length >= 3 ? parts[1] : '';
+}
+
+function uniqueSkuPrefix(themeId, excludeId=null) {
+  const base = baseSkuPrefix(themeId);
+  const used = new Set((listing.listings||[])
+    .filter(item=>item.id!==excludeId)
+    .map(item=>item.sku_prefix || inferSkuPrefix(item))
+    .filter(Boolean));
+  if (!used.has(base)) return base;
+  for (let i=2; i<100; i++) {
+    const candidate = `${base}${i}`;
+    if (!used.has(candidate)) return candidate;
+  }
+  return `${base}${Date.now().toString(36).slice(-3).toUpperCase()}`;
+}
+
+function skuSizeToken(size) {
+  return size.replace(/\s*x\s*/i,'').replace(/ in$/,'').replace(/\s/g,'');
+}
+
+function buildSkus(themeId, skuPrefix, types=['Print Only','Stretched Canvas'], sizes=SIZES, existing=[]) {
+  const ex = {};
+  (existing||[]).forEach(s=>{ex[`${s.type}|${s.size}`]=s;});
+  const skus = [];
+  types.forEach(type => {
+    sizes.forEach(size => {
+      const old = ex[`${type}|${size}`] || {};
+      const d = DEFAULT_DIMS[type] || DEFAULT_DIMS['Print Only'];
+      const T = type==='Print Only'?'P':'C';
+      skus.push({
+        seller_sku:`IS-${skuPrefix}-${T}-${skuSizeToken(size)}`,
+        type,
+        size,
+        price: old.price ?? DEFAULT_PRICES[type]?.[size] ?? 19.99,
+        weight_lb: old.weight_lb??d.weight_lb,
+        length_in: old.length_in??d.length_in,
+        width_in:  old.width_in ??d.width_in,
+        height_in: old.height_in??d.height_in,
+      });
+    });
+  });
+  return skus;
+}
 
 // ─── init ────────────────────────────────────────────────────────────────────
 async function init() {
@@ -730,13 +999,126 @@ async function loadAll() {
     fetch('/api/state').then(r=>r.json()).catch(()=>({})),
     fetch('/api/listing').then(r=>r.json()).catch(()=>({})),
   ]);
-  imgState = s; listing = l;
+  imgState = s; listing = normalizeListingConfig(l);
   renderPills();
+  renderListingTabs();
   populateForm();
   renderAssets();
   renderGallery();
   renderPreview();
   renderUrlInputs();
+}
+
+const THEME_EMOJI = {
+  pets:'🐾', pets_original:'📷', pets_royal:'👑', pets_anime:'🌸',
+  people:'👨‍👩‍👧', world_cup:'⚽',
+};
+
+function tabLabel(item) {
+  const name = item.listing?.product_name?.trim();
+  if (name) {
+    const short = name.split('|')[0].trim();
+    return short.length > 24 ? short.slice(0,22)+'…' : short;
+  }
+  const emoji = THEME_EMOJI[item.theme_id] || '📋';
+  return emoji + ' New Listing';
+}
+
+function renderListingTabs() {
+  const bar = document.getElementById('listingTabs');
+  if (!bar) return;
+  bar.innerHTML = '';
+  listing.listings.forEach((item, idx) => {
+    const tab = document.createElement('button');
+    tab.className = 'ltab' + (item.id===listing.active_listing_id?' active':'');
+    const emoji = THEME_EMOJI[item.theme_id] || '📋';
+    const label = tabLabel(item);
+    const canDel = listing.listings.length > 1;
+    tab.innerHTML = `<span class="ltab-emoji">${emoji}</span>
+      <span class="ltab-name">${label}</span>
+      ${canDel?`<span class="ltab-close" data-id="${item.id}" title="Delete">×</span>`:''}`;
+    tab.addEventListener('click', e => {
+      if (e.target.classList.contains('ltab-close')) return;
+      switchListing(item.id);
+    });
+    if (canDel) {
+      tab.querySelector('.ltab-close').addEventListener('click', e => {
+        e.stopPropagation();
+        if (!confirm(`Delete listing "${label}"?`)) return;
+        deleteListingById(item.id);
+      });
+    }
+    bar.appendChild(tab);
+  });
+  const sep = document.createElement('div');
+  sep.className = 'ltab-sep';
+  bar.appendChild(sep);
+  const addBtn = document.createElement('button');
+  addBtn.className = 'ltab-add';
+  addBtn.title = 'Add new listing';
+  addBtn.textContent = '+';
+  addBtn.addEventListener('click', addListing);
+  bar.appendChild(addBtn);
+  renderExportSummary();
+}
+
+function renderExportSummary() {
+  const el = document.getElementById('exportListingSummary');
+  if (!el) return;
+  el.innerHTML = '';
+  listing.listings.forEach(item => {
+    const isActive = item.id === listing.active_listing_id;
+    const emoji = THEME_EMOJI[item.theme_id] || '📋';
+    const name = item.listing?.product_name?.trim() || 'Untitled Listing';
+    const skuCount = item.skus?.length || 0;
+    const imgCount = Object.values(item.listing?.images||{}).filter(Boolean).length;
+    const themeAssets = imgState.themes?.find(t=>t.id===item.theme_id)?.assets||[];
+    const genCount = themeAssets.filter(a=>a.image_url).length;
+    const imgTotal = Math.max(imgCount + genCount, 0);
+    const ready = skuCount > 0 && (imgCount > 0 || genCount > 0);
+
+    const row = document.createElement('div');
+    row.className = 'exp-row' + (isActive?' active-row':'');
+
+    const ckId = `expck_${item.id}`;
+    row.innerHTML = `
+      <input type="checkbox" id="${ckId}" class="exp-check" data-id="${item.id}"
+             style="flex-shrink:0;cursor:pointer" checked>
+      <label for="${ckId}" class="exp-row-icon" style="cursor:pointer">${emoji}</label>
+      <div class="exp-row-info" style="cursor:pointer">
+        <div class="exp-row-name" title="${name}">${name.slice(0,36)+(name.length>36?'…':'')}</div>
+        <div class="exp-row-meta">${skuCount} SKUs · ${imgTotal > 0 ? imgTotal+' images' : 'No images yet'}</div>
+      </div>
+      <span class="exp-row-status ${ready?'ok':'warn'}">${ready?'Ready':'Incomplete'}</span>`;
+
+    // clicking row body (not checkbox) = switch to that listing
+    row.querySelector('.exp-row-info').addEventListener('click', () => switchListing(item.id));
+    row.querySelector('.exp-row-icon').addEventListener('click', () => switchListing(item.id));
+    row.querySelector('.exp-check').addEventListener('change', updateExportBtn);
+
+    el.appendChild(row);
+  });
+  updateExportBtn();
+}
+
+function getSelectedListingIds() {
+  return [...document.querySelectorAll('.exp-check:checked')].map(el => el.dataset.id);
+}
+
+function updateExportBtn() {
+  const sel = document.querySelectorAll('.exp-check:checked').length;
+  const total = listing.listings?.length || 0;
+  const btn = document.getElementById('exportBtn');
+  if (!btn) return;
+  btn.textContent = total <= 1
+    ? '⬇ Export Listing → XLSX'
+    : `⬇ Export ${sel} of ${total} Listings → XLSX`;
+  btn.disabled = sel === 0;
+}
+
+function toggleAllExport(checked) {
+  document.querySelectorAll('.exp-check').forEach(el => { el.checked = checked; });
+  updateExportBtn();
 }
 
 // ─── pills ───────────────────────────────────────────────────────────────────
@@ -746,6 +1128,8 @@ function renderPills() {
   const ok = imgState.api_key_loaded;
   mkPill(el, ok?'ok':'warn', ok?`API ${imgState.api_key_hint}`:'No API key');
   mkPill(el, '', `${imgState.generated_count||0}/${imgState.asset_count||0} images`);
+  const n = listing.listings?.length || 1;
+  mkPill(el, n > 1 ? 'ok' : '', `${n} listing${n===1?'':'s'}`);
   if (imgState.template_exists===false) mkPill(el,'err','template.xlsx missing');
 }
 function mkPill(p,cls,txt){
@@ -774,6 +1158,25 @@ function getThemeId() {
   return entry ? entry.theme : cat;
 }
 
+function syncActiveTheme() {
+  const item = activeItem();
+  const themeId = getThemeId();
+  if (item.theme_id !== themeId) {
+    item.theme_id = themeId;
+    item.sku_prefix = uniqueSkuPrefix(themeId, item.id);
+  }
+}
+
+function setThemeControls(themeId) {
+  const match = Object.entries(CAT_STYLES).flatMap(([cat, styles]) =>
+    styles.map(style => ({cat, styleId:style.id, theme:style.theme}))
+  ).find(item => item.theme === themeId);
+  if (!match) return;
+  document.getElementById('fCategory').value = match.cat;
+  updateStyleOptions();
+  document.getElementById('fArtStyle').value = match.styleId;
+}
+
 // ─── form populate ────────────────────────────────────────────────────────────
 function buildSizeChecks() {
   const el = document.getElementById('sizeChecks');
@@ -786,18 +1189,19 @@ function buildSizeChecks() {
 }
 
 function populateForm() {
-  if (!listing.listing) return;
-  const l = listing.listing;
+  const item = activeItem();
+  const l = item.listing || {};
+  setThemeControls(item.theme_id || 'pets');
   document.getElementById('fName').value     = l.product_name       || '';
   document.getElementById('fDesc').value     = l.product_description || '';
   document.getElementById('fAesthetic').value= l.attributes?.style  || 'Minimalist';
   document.getElementById('fPurpose').value  = l.attributes?.occasion|| 'Gift';
 
-  const types = new Set((listing.skus||[]).map(s=>s.type));
+  const types = new Set((item.skus||[]).map(s=>s.type));
   document.getElementById('typePrint').checked  = types.size===0||types.has('Print Only');
   document.getElementById('typeCanvas').checked = types.size===0||types.has('Stretched Canvas');
 
-  const sizes = new Set((listing.skus||[]).map(s=>s.size));
+  const sizes = new Set((item.skus||[]).map(s=>s.size));
   document.querySelectorAll('.szck').forEach(cb=>{
     cb.checked = sizes.size===0 || sizes.has(cb.value);
   });
@@ -820,19 +1224,16 @@ function renderSkuTable() {
   body.innerHTML = '';
 
   const ex = {};
-  (listing.skus||[]).forEach(s=>{ex[`${s.type}|${s.size}`]=s;});
+  (activeItem().skus||[]).forEach(s=>{ex[`${s.type}|${s.size}`]=s;});
 
-  const skuPrefix = {
-    pets:'PET',pets_original:'ORG',pets_royal:'ROY',pets_anime:'ANI',
-    people:'PPL',world_cup:'WC'
-  }[themeId]||'X';
+  const skuPrefix = activeItem().sku_prefix || baseSkuPrefix(themeId);
 
   types.forEach(type => {
     sizes.forEach(size => {
       const key   = `${type}|${size}`;
       const price = ex[key]?.price ?? DEFAULT_PRICES[type]?.[size] ?? 19.99;
       const T = type==='Print Only'?'P':'C';
-      const S = size.replace(/\s*x\s*/i,'').replace(/ in$/,'').replace(/\s/g,'');
+      const S = skuSizeToken(size);
       const sku = `IS-${skuPrefix}-${T}-${S}`;
       const tr = document.createElement('tr');
       tr.innerHTML = `
@@ -850,6 +1251,8 @@ function renderSkuTable() {
 
 // ─── listeners ───────────────────────────────────────────────────────────────
 function setupListeners() {
+  document.getElementById('dupeListingBtn').addEventListener('click', duplicateListing);
+
   document.getElementById('typePrint').addEventListener('change',  renderSkuTable);
   document.getElementById('typeCanvas').addEventListener('change', renderSkuTable);
   document.querySelectorAll('.szck').forEach(cb=>cb.addEventListener('change',()=>{
@@ -857,10 +1260,10 @@ function setupListeners() {
   }));
 
   document.getElementById('fCategory').addEventListener('change',()=>{
-    updateStyleOptions(); renderSkuTable(); renderAssets(); renderPreview();
+    updateStyleOptions(); syncActiveTheme(); renderSkuTable(); renderAssets(); renderPreview();
   });
   document.getElementById('fArtStyle').addEventListener('change',()=>{
-    renderSkuTable(); renderAssets(); renderPreview();
+    syncActiveTheme(); renderSkuTable(); renderAssets(); renderPreview();
   });
 
   document.getElementById('fName').addEventListener('input', renderPreview);
@@ -880,7 +1283,88 @@ function setupListeners() {
   document.getElementById('genMockBtn').addEventListener('click', ()=>generateAll('mock'));
   document.getElementById('genLiveBtn').addEventListener('click', ()=>generateAll('live'));
   document.getElementById('exportBtn').addEventListener('click',  exportXLSX);
+  document.getElementById('xlsxDownloadBtn').addEventListener('click', downloadXLSX);
   document.getElementById('downloadImagesBtn').addEventListener('click', downloadImagesZip);
+  checkExistingXLSX();
+}
+
+async function switchListing(id) {
+  commitActiveItemFromForm();
+  listing.active_listing_id = id;
+  await saveFullConfig(true);
+  renderListingTabs();
+  populateForm();
+  renderAssets();
+  renderPreview();
+  renderUrlInputs();
+}
+
+async function addListing() {
+  commitActiveItemFromForm();
+  const themeId = getThemeId();
+  const id = uniqueItemId();
+  const skuPrefix = uniqueSkuPrefix(themeId);
+  listing.listings.push({
+    id,
+    theme_id: themeId,
+    sku_prefix: skuPrefix,
+    listing: {
+      category:'Home Decor/Posters & Prints/Prints',
+      brand:'No brand',
+      product_name: NAME_TPL[themeId] || '',
+      product_description: DESC[themeId] || '',
+      images:{},
+      variation_1_name:'Type', variation_2_name:'Size',
+      delivery:'Default', warehouse_quantity_1:100, warehouse_quantity_2:0, status:'Draft(2)',
+      attributes:{...(activeListingData().attributes||{}), style:'Minimalist', occasion:'Gift'},
+    },
+    skus: buildSkus(themeId, skuPrefix),
+  });
+  listing.active_listing_id = id;
+  await saveFullConfig(true);
+  renderListingTabs();
+  populateForm();
+  renderAssets();
+  renderPreview();
+  renderUrlInputs();
+}
+
+async function duplicateListing() {
+  commitActiveItemFromForm();
+  const source = activeItem();
+  const copy = JSON.parse(JSON.stringify(source));
+  copy.id = uniqueItemId();
+  copy.sku_prefix = uniqueSkuPrefix(copy.theme_id || getThemeId());
+  copy.listing.product_name = `${copy.listing.product_name || 'Untitled Listing'} Copy`;
+  const types = [...new Set((copy.skus||[]).map(sku=>sku.type))];
+  const sizes = [...new Set((copy.skus||[]).map(sku=>sku.size))];
+  copy.skus = buildSkus(copy.theme_id || getThemeId(), copy.sku_prefix, types.length?types:undefined, sizes.length?sizes:undefined, copy.skus);
+  listing.listings.push(copy);
+  listing.active_listing_id = copy.id;
+  await saveFullConfig(true);
+  renderListingTabs();
+  populateForm();
+  renderAssets();
+  renderPreview();
+  renderUrlInputs();
+}
+
+async function deleteListing() {
+  await deleteListingById(listing.active_listing_id);
+}
+
+async function deleteListingById(id) {
+  if (listing.listings.length <= 1) return;
+  listing.listings = listing.listings.filter(item=>item.id!==id);
+  if (listing.active_listing_id === id) {
+    listing.active_listing_id = listing.listings[0].id;
+  }
+  await saveFullConfig(true);
+  renderListingTabs();
+  populateForm();
+  renderAssets();
+  renderPreview();
+  renderUrlInputs();
 }
 
 // ─── asset cards ──────────────────────────────────────────────────────────────
@@ -894,7 +1378,7 @@ function renderAssets() {
   container.innerHTML = '';
   const tid    = getThemeId();
   const assets = getThemeAssets();
-  const urls   = listing.listing?.images || {};
+  const urls   = activeListingData().images || {};
 
   if (!assets.length) {
     container.innerHTML = `<div style="color:var(--muted);font-size:12px;padding:20px;text-align:center;border:1px dashed var(--line);border-radius:8px">
@@ -904,7 +1388,7 @@ function renderAssets() {
     return;
   }
 
-  ['main_image','image_2','image_3','image_4','image_5'].forEach(slot => {
+  ['main_image','image_2','image_3','image_4','image_5','image_6'].forEach(slot => {
     const meta = SLOT_META[slot];
     const info = assets.find(a=>a.slot===slot);
     if (!meta || !info) return;
@@ -1002,9 +1486,10 @@ async function applyUrl(slot, inputId) {
   const id  = inputId || `url_${slot}`;
   const url = document.getElementById(id)?.value?.trim();
   if (!url) return;
-  if (!listing.listing) listing.listing = {};
-  if (!listing.listing.images) listing.listing.images = {};
-  listing.listing.images[slot] = url;
+  const item = activeItem();
+  if (!item.listing) item.listing = {};
+  if (!item.listing.images) item.listing.images = {};
+  item.listing.images[slot] = url;
   // sync the other input field
   const other = id.startsWith('pvurl') ? `url_${slot}` : `pvurl_${slot}`;
   const otherEl = document.getElementById(other);
@@ -1046,59 +1531,75 @@ function lockBtns(on) {
 }
 
 // ─── save listing ─────────────────────────────────────────────────────────────
-function collectConfig() {
+function collectActiveItem() {
   const themeId = getThemeId();
   const sizes = getSizes(), types = getTypes();
-  const ex = {};
-  (listing.skus||[]).forEach(s=>{ex[`${s.type}|${s.size}`]=s;});
-  const DEF_DIM = {
-    'Print Only':      {weight_lb:.21,length_in:9.84, width_in:5.91, height_in:.79},
-    'Stretched Canvas':{weight_lb:.63,length_in:12.60,width_in:8.27, height_in:.79},
-  };
-  const skuPfx = {
-    pets:'PET',pets_original:'ORG',pets_royal:'ROY',pets_anime:'ANI',
-    people:'PPL',world_cup:'WC'
-  }[themeId]||'X';
-
-  const skus = [];
-  types.forEach(type => {
-    sizes.forEach(size => {
-      const price = parseFloat(
-        document.querySelector(`.priceinput[data-type="${type}"][data-size="${size}"]`)?.value || 0
-      );
-      const e = ex[`${type}|${size}`]||{};
-      const d = DEF_DIM[type]||DEF_DIM['Print Only'];
-      const T = type==='Print Only'?'P':'C';
-      const S = size.replace(/\s*x\s*/i,'').replace(/ in$/,'').replace(/\s/g,'');
-      skus.push({
-        seller_sku:`IS-${skuPfx}-${T}-${S}`, type, size, price,
-        weight_lb: e.weight_lb??d.weight_lb,
-        length_in: e.length_in??d.length_in,
-        width_in:  e.width_in ??d.width_in,
-        height_in: e.height_in??d.height_in,
-      });
-    });
-  });
+  const item = activeItem();
+  const skuPrefix = item.sku_prefix || uniqueSkuPrefix(themeId, item.id);
+  const priceRows = buildSkus(themeId, skuPrefix, types, sizes, item.skus);
+  const skus = priceRows.map(sku => ({
+    ...sku,
+    price: parseFloat(
+      document.querySelector(`.priceinput[data-type="${sku.type}"][data-size="${sku.size}"]`)?.value || sku.price || 0
+    ),
+  }));
 
   return {
-    template_path: listing.template_path || 'input_template.xlsx',
-    output_path:   listing.output_path   || 'outputs/inkerastory_tiktok_bulk_upload.xlsx',
+    ...item,
+    theme_id: themeId,
+    sku_prefix: skuPrefix,
     listing: {
-      category:            listing.listing?.category||'Home Decor/Posters & Prints/Prints',
-      brand:               listing.listing?.brand   ||'No brand',
+      category:            activeListingData().category||'Home Decor/Posters & Prints/Prints',
+      brand:               activeListingData().brand   ||'No brand',
       product_name:        document.getElementById('fName').value,
       product_description: document.getElementById('fDesc').value,
-      images:              listing.listing?.images  ||{},
+      images:              activeListingData().images  ||{},
       variation_1_name:'Type', variation_2_name:'Size',
       delivery:'Default', warehouse_quantity_1:100, warehouse_quantity_2:0, status:'Draft(2)',
       attributes:{
-        ...(listing.listing?.attributes||{}),
+        ...(activeListingData().attributes||{}),
         style:    document.getElementById('fAesthetic').value,
         occasion: document.getElementById('fPurpose').value,
       },
     },
     skus,
   };
+}
+
+function commitActiveItemFromForm() {
+  const item = collectActiveItem();
+  const index = listing.listings.findIndex(entry=>entry.id===item.id);
+  if (index >= 0) listing.listings[index] = item;
+}
+
+function collectConfig() {
+  commitActiveItemFromForm();
+  return {
+    template_path: listing.template_path || 'input_template.xlsx',
+    output_path:   listing.output_path   || 'outputs/inkerastory_tiktok_bulk_upload.xlsx',
+    active_listing_id: listing.active_listing_id,
+    listings: listing.listings,
+  };
+}
+
+async function saveFullConfig(silent=false) {
+  const data = normalizeListingConfig(listing);
+  try {
+    const res = await fetch('/api/listing',{
+      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data),
+    });
+    const r = await res.json();
+    listing = normalizeListingConfig(data);
+    if (!silent) {
+      const el = document.getElementById('saveStatus');
+      el.style.color = r.ok?'var(--ok)':'var(--danger)';
+      el.textContent = r.ok?'✓ Saved':'✗ '+(r.error||'Failed');
+      setTimeout(()=>{el.textContent='';},3000);
+    }
+    renderListingTabs();
+    renderPreview();
+    return Boolean(r.ok);
+  } catch(e){ if(!silent) document.getElementById('saveStatus').textContent='✗ '+e; return false; }
 }
 
 async function saveListing(silent=false) {
@@ -1108,36 +1609,68 @@ async function saveListing(silent=false) {
       method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data),
     });
     const r = await res.json();
-    listing = data;
+    listing = normalizeListingConfig(data);
     if (!silent) {
       const el = document.getElementById('saveStatus');
       el.style.color = r.ok?'var(--ok)':'var(--danger)';
       el.textContent = r.ok?'✓ Saved':'✗ '+(r.error||'Failed');
       setTimeout(()=>{el.textContent='';},3000);
     }
+    renderListingTabs();
     renderPreview();
-  } catch(e){ if(!silent) document.getElementById('saveStatus').textContent='✗ '+e; }
+    return Boolean(r.ok);
+  } catch(e){ if(!silent) document.getElementById('saveStatus').textContent='✗ '+e; return false; }
 }
 
 // ─── export ───────────────────────────────────────────────────────────────────
 async function exportXLSX() {
+  const st   = document.getElementById('expStatus');
+  const info = document.getElementById('xlsxInfo');
+  const selectedIds = getSelectedListingIds();
+  if (!selectedIds.length) { st.style.color='var(--danger)'; st.textContent='✗ No listings selected'; return; }
+  lockBtns(true);
+  st.style.color = 'var(--muted)'; st.textContent = 'Saving…';
+  try {
+    const saved = await saveListing(true);
+    if (!saved) { st.style.color='var(--danger)'; st.textContent='✗ Save failed'; return; }
+    const n = selectedIds.length;
+    st.textContent = `Building XLSX for ${n} listing${n===1?'':'s'}…`;
+    const res = await fetch('/api/export', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({listing_ids: selectedIds}),
+    });
+    const d = await res.json().catch(()=>({}));
+    if (d.ok) {
+      st.style.color = 'var(--ok)';
+      st.textContent = `✓ Built — ${d.rows} SKU rows`;
+      info.textContent = `${d.path}  ·  ${new Date().toLocaleTimeString()}`;
+      document.getElementById('xlsxDownloadBtn').disabled = false;
+    } else {
+      st.style.color = 'var(--danger)';
+      st.textContent = '✗ ' + (d.error || 'Build failed');
+    }
+  } catch(e){ st.style.color='var(--danger)'; st.textContent='✗ '+String(e); }
+  finally { lockBtns(false); }
+}
+
+async function downloadXLSX() {
   const st = document.getElementById('expStatus');
-  lockBtns(true); st.textContent='Building XLSX…';
+  st.style.color='var(--muted)'; st.textContent='Downloading…';
   try {
     const res = await fetch('/api/export');
     if (res.ok && res.headers.get('Content-Type')?.includes('spreadsheet')) {
       const blob = await res.blob();
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement('a');
-      a.href=url; a.download='inkerastory_tiktok_bulk_upload.xlsx'; a.click();
+      a.href = url; a.download = 'inkerastory_tiktok_bulk_upload.xlsx'; a.click();
       URL.revokeObjectURL(url);
-      st.textContent='✓ Downloaded';
+      st.style.color='var(--ok)'; st.textContent='✓ File saved';
     } else {
       const e = await res.json().catch(()=>({}));
-      st.textContent='✗ '+(e.error||'Build failed');
+      st.style.color='var(--danger)'; st.textContent='✗ '+(e.error||'Download failed');
     }
-  } catch(e){ st.textContent='✗ '+String(e); }
-  finally { lockBtns(false); }
+  } catch(e){ st.style.color='var(--danger)'; st.textContent='✗ '+String(e); }
 }
 
 async function downloadImagesZip() {
@@ -1196,7 +1729,7 @@ function renderPreview() {
   }
 
   const assets   = getThemeAssets();
-  const listedU  = listing.listing?.images||{};
+  const listedU  = activeListingData().images||{};
   cImages = ['main_image','image_2','image_3','image_4','image_5']
     .map(s=>assets.find(a=>a.slot===s)?.image_url||listedU[s])
     .filter(Boolean);
@@ -1232,7 +1765,7 @@ function shiftC(dir){ cIdx=(cIdx+dir+cImages.length)%cImages.length; updateCarou
 // ─── url inputs in preview panel ─────────────────────────────────────────────
 function renderUrlInputs() {
   const el   = document.getElementById('urlInputs');
-  const urls = listing.listing?.images||{};
+  const urls = activeListingData().images||{};
   const labels={main_image:'Closeup',image_2:'Scene',image_3:'Mood',image_4:'Room',image_5:'Sizes'};
   el.innerHTML='';
   ['main_image','image_2','image_3','image_4','image_5'].forEach(slot=>{
@@ -1245,6 +1778,18 @@ function renderUrlInputs() {
       <button class="sm" onclick="applyUrl('${slot}','pvurl_${slot}')">Set</button>`;
     el.appendChild(row);
   });
+}
+
+async function checkExistingXLSX() {
+  // HEAD the export endpoint to see if a file already exists
+  try {
+    const res = await fetch('/api/export', {method:'HEAD'});
+    if (res.ok) {
+      document.getElementById('xlsxDownloadBtn').disabled = false;
+      document.getElementById('xlsxInfo').textContent =
+        'outputs/inkerastory_tiktok_bulk_upload.xlsx  ·  previously built';
+    }
+  } catch(_){}
 }
 
 init();
@@ -1265,6 +1810,10 @@ class StudioHandler(BaseHTTPRequestHandler):
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(body)))
             self.end_headers()
+        elif p == "/api/export":
+            out = ROOT / "outputs" / "inkerastory_tiktok_bulk_upload.xlsx"
+            code = 200 if out.exists() else 404
+            self.send_response(code); self.end_headers()
         else:
             self.send_response(404); self.end_headers()
 
@@ -1308,10 +1857,11 @@ class StudioHandler(BaseHTTPRequestHandler):
             return
 
         if p == "/api/export":
-            result = run_export()
-            if not result["ok"]:
-                json_response(self, 500, result); return
-            xlsx = Path(result["path"]); body = xlsx.read_bytes()
+            # Download whatever was last built
+            out = ROOT / "outputs" / "inkerastory_tiktok_bulk_upload.xlsx"
+            if not out.exists():
+                json_response(self, 404, {"error": "No XLSX built yet — click Build first."}); return
+            body = out.read_bytes()
             self.send_response(200)
             self.send_header("Content-Type",
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
@@ -1354,6 +1904,11 @@ class StudioHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 json_response(self, 500, {"ok": False, "error": str(e)})
             return
+
+        if p == "/api/export":
+            ids = payload.get("listing_ids")  # list[str] | None
+            result = run_export(listing_ids=ids)
+            json_response(self, 200 if result["ok"] else 500, result); return
 
         json_response(self, 404, {"error": "Not found"})
 

@@ -99,7 +99,12 @@ The studio shows:
 - which theme images are present or missing
 - image previews from `outputs/generated_images/`
 - prompts for each asset
+- a multi-listing manager for creating, duplicating, deleting, and switching between products
 - buttons for dry-run, mock generation, and live generation
+
+The listing config supports multiple products in `data/inkerastory_listing.json` under `listings`.
+Each product keeps its own product name, description, image URLs, theme, attributes, and SKUs.
+Export writes every product's SKU rows into the same TikTok bulk upload workbook.
 
 ## Apply Generated Image URLs
 

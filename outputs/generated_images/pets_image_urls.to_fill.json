@@ -1,10 +1,6 @@
 {
   "theme_id": "pets",
   "images": {
-    "main_image": "https://your-public-image-host/pets_01_main_clean_canvas.png",
-    "image_2": "https://your-public-image-host/pets_02_owner_reaction.png",
-    "image_3": "https://your-public-image-host/pets_03_memorial_keepsake.png",
-    "image_4": "https://your-public-image-host/pets_04_room_mockup.png",
-    "image_5": "https://your-public-image-host/pets_05_size_chart.png"
+    "image_6": "https://your-public-image-host/pets_06_print_flatlay.png"
   }
 }
