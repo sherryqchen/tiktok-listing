@@ -1,7 +1,7 @@
 {
   "template_path": "input_template.xlsx",
   "output_path": "outputs/inkerastory_tiktok_bulk_upload.xlsx",
-  "active_listing_id": "item_1",
+  "active_listing_id": "item_mqh3n8q2_wgy0",
   "listings": [
     {
       "id": "item_1",
@@ -10,7 +10,7 @@
         "category": "Home Decor/Posters & Prints/Prints",
         "brand": "No brand",
         "product_name": "Personalized Pet Portrait Canvas Print | Custom Dog Cat Photo Wall Art | Pet Memorial Gift | INKERASTORY",
-        "product_description": "INKERASTORY - Ink Your Pet Story on Canvas\n\nTurn your favorite dog, cat, or pet photo into warm personalized wall art made for everyday home decor, thoughtful gifting, and meaningful keepsakes.\n\nEach piece is made to order from your uploaded pet photo. Add your pet's name, a short quote, a special date, or keep the design clean and portrait-focused. The result is a custom print that celebrates the pet who makes your home feel like home.\n\nPerfect for:\n- Dog portraits\n- Cat portraits\n- Pet memorial keepsakes\n- New pet parent gifts\n- Birthday and holiday gifts\n- Apartment, bedroom, office, or living room decor\n- Multi-pet family photos\n\nProduct Features:\n- Personalized design made from your pet photo\n- Premium HD printing\n- Fade-resistant inks\n- Available as Poster / Print Only or Stretched Canvas\n- Multiple sizes available\n- Warm, gift-ready pet portrait style\n- Ready-to-display canvas option\n\nHow It Works:\n1. Upload a clear pet photo after ordering\n2. Add optional name, quote, date, or note\n3. Choose print-only or stretched canvas\n4. We create your custom pet portrait artwork\n5. Receive a unique piece that keeps your pet's story close\n\nPhoto tip: bright, clear front-facing photos work best. For best results, avoid blurry screenshots, dark photos, or heavily filtered images.\n\nINKERASTORY - Because every pet story deserves a place on your wall.",
+        "product_description": "INKERASTORY - Ink Your Pet Story on Canvas\n\nTurn your favorite dog, cat, or pet photo into warm personalized wall art made for everyday home decor, thoughtful gifting, and meaningful keepsakes.\n\nEach piece is made to order from your uploaded pet photo. Add your pet's name, a short quote, a special date, or keep the design clean and portrait-focused. The result is a custom print that celebrates the pet who makes your home feel like home.\n\nPerfect for:\n- Dog portraits\n- Cat portraits\n- Pet memorial keepsakes\n- New pet parent gifts\n- Birthday and holiday gifts\n- Apartment, bedroom, office, or living room decor\n- Multi-pet family photos\n\nProduct Features:\n- Personalized design made from your pet photo\n- Premium HD printing\n- Fade-resistant inks\n- Available as Poster / Print Only or Stretched Canvas\n- Multiple sizes available\n- Warm, gift-ready pet portrait style\n- Ready-to-display canvas option\n\nHow It Works:\n1. Upload a clear pet photo after ordering\n2. Add optional name, quote, date, or note\n3. Choose print-only or stretched canvas\n4. We send you a final image for cinfirmation and create your custom pet portrait artwork\n5. Receive a unique piece that keeps your pet's story close\n\nPhoto tip: bright, clear front-facing photos work best. For best results, avoid blurry screenshots, dark photos, or heavily filtered images.\n\nINKERASTORY - Because every pet story deserves a place on your wall.",
         "images": {
           "main_image": "https://p16-oec-general-useast5.ttcdn-us.com/tos-useast5-i-omjb5zjo8w-tx/98cfde807ad7418da109bec135c5f050~tplv-fhlh96nyum-origin-jpeg.jpeg?dr=12178&t=555f072d&ps=933b5bde&shp=5563f2fb&shcp=9cd7d13a&idc=useast5&from=1432613627width=1024&height=1024",
           "image_2": "https://p19-oec-general-useast5.ttcdn-us.com/tos-useast5-i-omjb5zjo8w-tx/97c60118f6c0436e912d06b21e73046f~tplv-fhlh96nyum-origin-jpeg.jpeg?dr=12178&t=555f072d&ps=933b5bde&shp=5563f2fb&shcp=9cd7d13a&idc=useast5&from=1432613627width=1024&height=1024",
@@ -248,6 +248,244 @@
           "length_in": 36,
           "width_in": 24,
           "height_in": 1
+        }
+      ]
+    },
+    {
+      "id": "item_mqh1dfqc_gwu6",
+      "theme_id": "pets_world_cup",
+      "sku_prefix": "PWC",
+      "listing": {
+        "category": "Home Decor/Posters & Prints/Prints",
+        "brand": "No brand",
+        "product_name": "Personalized Pet Portrait Canvas Print | Custom Dog Cat Photo Wall Art | Pet Gift | INKERASTORY",
+        "product_description": "INKERASTORY - Ink Your Pet Story on Canvas\n\nTurn your favorite dog, cat, or pet photo into warm personalized wall art — perfect for home decor, gifting, and keepsakes.\n\nEach piece is made to order. Add your pet's name, a short quote, or keep it portrait-focused.\n\nPerfect for:\n- Dog & cat portraits  ·  Pet memorial keepsakes\n- New pet parent gifts  ·  Birthday & holiday gifts\n- Multi-pet family photos\n\nProduct Features:\n- Personalized from your photo  ·  Premium HD printing\n- Fade-resistant inks  ·  Print Only or Stretched Canvas\n- Multiple sizes\n\nHow It Works:\n1. Upload a clear pet photo after ordering\n2. Add optional name, quote, date, or note\n3. Choose print-only or stretched canvas\n4. We send you a final image for cinfirmation and create your custom pet portrait artwork\n5. Receive a unique piece that keeps your pet's story close\n\nINKERASTORY - Because every pet story deserves a place on your wall.",
+        "images": {},
+        "variation_1_name": "Type",
+        "variation_2_name": "Size",
+        "delivery": "Default",
+        "warehouse_quantity_1": 100,
+        "warehouse_quantity_2": 0,
+        "status": "Draft(2)",
+        "attributes": {
+          "pattern": "Print",
+          "occasion": "Gift",
+          "style": "Minimalist",
+          "feature": "Handmade",
+          "shape": "Rectangle",
+          "material_print": "Printed Cotton",
+          "material_canvas": "Cotton Canvas",
+          "setting": "No",
+          "use": "No",
+          "installment": "No",
+          "dangerous_goods": "No",
+          "other_dangerous_goods": "No",
+          "ca_prop65_repro_chems": "No",
+          "reprotoxic_chemicals": "",
+          "ca_prop65_carcinogens": "No",
+          "carcinogen": "",
+          "team": "argentina"
+        }
+      },
+      "skus": [
+        {
+          "seller_sku": "IS-PWC-P-812",
+          "type": "Print Only",
+          "size": "8 x 12 in",
+          "price": 14.98,
+          "weight_lb": 0.21,
+          "length_in": 9.84,
+          "width_in": 5.91,
+          "height_in": 0.79
+        },
+        {
+          "seller_sku": "IS-PWC-P-1218",
+          "type": "Print Only",
+          "size": "12 x 18 in",
+          "price": 17.99,
+          "weight_lb": 0.21,
+          "length_in": 9.84,
+          "width_in": 5.91,
+          "height_in": 0.79
+        },
+        {
+          "seller_sku": "IS-PWC-P-1624",
+          "type": "Print Only",
+          "size": "16 x 24 in",
+          "price": 26.99,
+          "weight_lb": 0.21,
+          "length_in": 9.84,
+          "width_in": 5.91,
+          "height_in": 0.79
+        },
+        {
+          "seller_sku": "IS-PWC-P-2436",
+          "type": "Print Only",
+          "size": "24 x 36 in",
+          "price": 39.99,
+          "weight_lb": 0.21,
+          "length_in": 9.84,
+          "width_in": 5.91,
+          "height_in": 0.79
+        },
+        {
+          "seller_sku": "IS-PWC-C-812",
+          "type": "Stretched Canvas",
+          "size": "8 x 12 in",
+          "price": 19.99,
+          "weight_lb": 0.63,
+          "length_in": 12.6,
+          "width_in": 8.27,
+          "height_in": 0.79
+        },
+        {
+          "seller_sku": "IS-PWC-C-1218",
+          "type": "Stretched Canvas",
+          "size": "12 x 18 in",
+          "price": 29.99,
+          "weight_lb": 0.63,
+          "length_in": 12.6,
+          "width_in": 8.27,
+          "height_in": 0.79
+        },
+        {
+          "seller_sku": "IS-PWC-C-1624",
+          "type": "Stretched Canvas",
+          "size": "16 x 24 in",
+          "price": 39.99,
+          "weight_lb": 0.63,
+          "length_in": 12.6,
+          "width_in": 8.27,
+          "height_in": 0.79
+        },
+        {
+          "seller_sku": "IS-PWC-C-2436",
+          "type": "Stretched Canvas",
+          "size": "24 x 36 in",
+          "price": 50.99,
+          "weight_lb": 0.63,
+          "length_in": 12.6,
+          "width_in": 8.27,
+          "height_in": 0.79
+        }
+      ]
+    },
+    {
+      "id": "item_mqh3n8q2_wgy0",
+      "theme_id": "pets_world_cup",
+      "sku_prefix": "PWC2",
+      "listing": {
+        "category": "Home Decor/Posters & Prints/Prints",
+        "brand": "No brand",
+        "product_name": "Custom Pet Soccer Jersey Canvas | Dog Cat in Team Colors | Soccer Fan Gift | INKERASTORY",
+        "product_description": "INKERASTORY - Your Pet in Their Team's Jersey, on Canvas\n\nTurn your dog or cat into the ultimate soccer fan — wearing their team's jersey, printed on premium canvas wall art.\n\nEach piece is made to order from your pet photo. Choose your team and we transform your pet into a jersey-wearing fan portrait ready to display on match day and every day after.\n\nPerfect for:\n- Soccer fans who love their pets  ·  World Cup season gifts\n- Match day home decor  ·  Fan caves and game rooms\n- Birthday gifts for soccer parents\n\nProduct Features:\n- Personalized from your pet photo  ·  Custom team jersey art style\n- Premium HD printing  ·  Fade-resistant inks\n- Print Only or Stretched Canvas  ·  Multiple sizes\n\nHow It Works:\n1. Upload a clear pet photo after ordering\n2. Add optional name, quote, date, or note\n3. Choose print-only or stretched canvas\n4. We send you a final image for cinfirmation and create your custom pet portrait artwork\n5. Receive a unique piece that keeps your pet's story close\n\nINKERASTORY - Because every fan story deserves a place on your wall.",
+        "images": {},
+        "variation_1_name": "Type",
+        "variation_2_name": "Size",
+        "delivery": "Default",
+        "warehouse_quantity_1": 100,
+        "warehouse_quantity_2": 0,
+        "status": "Draft(2)",
+        "attributes": {
+          "pattern": "Print",
+          "occasion": "Gift",
+          "style": "Minimalist",
+          "feature": "Handmade",
+          "shape": "Rectangle",
+          "material_print": "Printed Cotton",
+          "material_canvas": "Cotton Canvas",
+          "setting": "No",
+          "use": "No",
+          "installment": "No",
+          "dangerous_goods": "No",
+          "other_dangerous_goods": "No",
+          "ca_prop65_repro_chems": "No",
+          "reprotoxic_chemicals": "",
+          "ca_prop65_carcinogens": "No",
+          "carcinogen": "",
+          "team": "france"
+        }
+      },
+      "skus": [
+        {
+          "seller_sku": "IS-PWC2-P-812",
+          "type": "Print Only",
+          "size": "8 x 12 in",
+          "price": 14.98,
+          "weight_lb": 0.21,
+          "length_in": 9.84,
+          "width_in": 5.91,
+          "height_in": 0.79
+        },
+        {
+          "seller_sku": "IS-PWC2-P-1218",
+          "type": "Print Only",
+          "size": "12 x 18 in",
+          "price": 17.99,
+          "weight_lb": 0.21,
+          "length_in": 9.84,
+          "width_in": 5.91,
+          "height_in": 0.79
+        },
+        {
+          "seller_sku": "IS-PWC2-P-1624",
+          "type": "Print Only",
+          "size": "16 x 24 in",
+          "price": 26.99,
+          "weight_lb": 0.21,
+          "length_in": 9.84,
+          "width_in": 5.91,
+          "height_in": 0.79
+        },
+        {
+          "seller_sku": "IS-PWC2-P-2436",
+          "type": "Print Only",
+          "size": "24 x 36 in",
+          "price": 39.99,
+          "weight_lb": 0.21,
+          "length_in": 9.84,
+          "width_in": 5.91,
+          "height_in": 0.79
+        },
+        {
+          "seller_sku": "IS-PWC2-C-812",
+          "type": "Stretched Canvas",
+          "size": "8 x 12 in",
+          "price": 19.99,
+          "weight_lb": 0.63,
+          "length_in": 12.6,
+          "width_in": 8.27,
+          "height_in": 0.79
+        },
+        {
+          "seller_sku": "IS-PWC2-C-1218",
+          "type": "Stretched Canvas",
+          "size": "12 x 18 in",
+          "price": 29.99,
+          "weight_lb": 0.63,
+          "length_in": 12.6,
+          "width_in": 8.27,
+          "height_in": 0.79
+        },
+        {
+          "seller_sku": "IS-PWC2-C-1624",
+          "type": "Stretched Canvas",
+          "size": "16 x 24 in",
+          "price": 39.99,
+          "weight_lb": 0.63,
+          "length_in": 12.6,
+          "width_in": 8.27,
+          "height_in": 0.79
+        },
+        {
+          "seller_sku": "IS-PWC2-C-2436",
+          "type": "Stretched Canvas",
+          "size": "24 x 36 in",
+          "price": 50.99,
+          "weight_lb": 0.63,
+          "length_in": 12.6,
+          "width_in": 8.27,
+          "height_in": 0.79
         }
       ]
     }

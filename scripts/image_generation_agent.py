@@ -446,7 +446,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     generate = subparsers.add_parser("generate", help="Generate images or create a dry-run plan.")
     generate.add_argument("--config", default=str(DEFAULT_CONFIG))
-    generate.add_argument("--theme", choices=["world_cup", "pets", "pets_original", "pets_royal", "pets_anime", "people"], help="Theme to generate. Omit for all themes.")
+    generate.add_argument("--theme", choices=None, help="Theme to generate. Omit for all themes.")
     generate.add_argument("--prompt", help="Override the prompt for the selected slot (requires exactly one --slot).")
     generate.add_argument("--slot", action="append", help="Asset slot to generate, e.g. main_image. Repeatable.")
     generate.add_argument("--limit", type=int, help="Generate only the first N selected assets.")
@@ -466,7 +466,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     status = subparsers.add_parser("status", help="Show which expected image files exist.")
     status.add_argument("--config", default=str(DEFAULT_CONFIG))
-    status.add_argument("--theme", choices=["world_cup", "pets", "pets_original", "pets_royal", "pets_anime", "people"], help="Theme to inspect. Omit for all themes.")
+    status.add_argument("--theme", choices=None, help="Theme to inspect. Omit for all themes.")
     status.add_argument("--slot", action="append", help="Asset slot to inspect. Repeatable.")
     status.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR))
     status.add_argument("--output-format", choices=["png", "jpeg", "webp"], default=DEFAULT_FORMAT)
@@ -474,7 +474,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     doctor = subparsers.add_parser("doctor", help="Check environment and generation settings.")
     doctor.add_argument("--config", default=str(DEFAULT_CONFIG))
-    doctor.add_argument("--theme", choices=["world_cup", "pets", "pets_original", "pets_royal", "pets_anime", "people"], help="Theme to inspect. Omit for all themes.")
+    doctor.add_argument("--theme", choices=None, help="Theme to inspect. Omit for all themes.")
     doctor.add_argument("--slot", action="append", help="Asset slot to inspect. Repeatable.")
     doctor.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR))
     doctor.add_argument("--output-format", choices=["png", "jpeg", "webp"], default=DEFAULT_FORMAT)

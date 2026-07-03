@@ -1,6 +1,6 @@
 {
   "theme_id": "pets",
   "images": {
-    "image_6": "https://your-public-image-host/pets_06_print_flatlay.png"
+    "main_image": "https://your-public-image-host/pets_01_main_clean_canvas.png"
   }
 }

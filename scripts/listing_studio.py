@@ -110,12 +110,37 @@ def normalize_listing_config(config: dict[str, Any]) -> dict[str, Any]:
     return config
 
 
+SOCCER_TEAMS: dict[str, dict[str, str]] = {
+    "argentina":   {"name": "Argentina",   "colors": "sky blue and white vertical stripes, pet name '[PET NAME]' and number '10' on front chest"},
+    "france":      {"name": "France",      "colors": "deep navy blue jersey, pet name '[PET NAME]' and number '10' on front chest"},
+    "england":     {"name": "England",     "colors": "white jersey with navy collar, pet name '[PET NAME]' and number '9' on front chest"},
+    "brazil":      {"name": "Brazil",      "colors": "bright canary yellow jersey with green collar, pet name '[PET NAME]' and number '10' on front chest"},
+    "belgium":     {"name": "Belgium",     "colors": "red jersey with black and yellow trim, pet name '[PET NAME]' and number '10' on front chest"},
+    "spain":       {"name": "Spain",       "colors": "red jersey with yellow collar, pet name '[PET NAME]' and number '10' on front chest"},
+    "portugal":    {"name": "Portugal",    "colors": "dark green jersey with red accents, pet name '[PET NAME]' and number '7' on front chest"},
+    "netherlands": {"name": "Netherlands", "colors": "bright orange jersey with black collar, pet name '[PET NAME]' and number '10' on front chest"},
+    "germany":     {"name": "Germany",     "colors": "white jersey with black collar, pet name '[PET NAME]' and number '8' on front chest"},
+    "morocco":     {"name": "Morocco",     "colors": "red jersey with green trim, pet name '[PET NAME]' and number '22' on front chest"},
+    "croatia":     {"name": "Croatia",     "colors": "red and white checkerboard pattern jersey, pet name '[PET NAME]' and number '10' on front chest"},
+    "uruguay":     {"name": "Uruguay",     "colors": "pale sky blue jersey with dark collar, pet name '[PET NAME]' and number '9' on front chest"},
+    "colombia":    {"name": "Colombia",    "colors": "bright yellow jersey with blue and red sleeve bands, pet name '[PET NAME]' and number '10' on front chest"},
+    "usa":         {"name": "USA",         "colors": "white jersey with red and blue stripes, pet name '[PET NAME]' and number '10' on front chest"},
+    "mexico":      {"name": "Mexico",      "colors": "dark green jersey with red and white trim, pet name '[PET NAME]' and number '10' on front chest"},
+    "japan":       {"name": "Japan",       "colors": "dark navy blue jersey with red collar, pet name '[PET NAME]' and number '10' on front chest"},
+    "senegal":     {"name": "Senegal",     "colors": "white jersey with green and yellow pinstripes, pet name '[PET NAME]' and number '10' on front chest"},
+    "switzerland": {"name": "Switzerland", "colors": "red jersey with white trim, pet name '[PET NAME]' and number '10' on front chest"},
+    "denmark":     {"name": "Denmark",     "colors": "red jersey with white collar and cuffs, pet name '[PET NAME]' and number '10' on front chest"},
+    "australia":   {"name": "Australia",   "colors": "gold yellow jersey with green panels, pet name '[PET NAME]' and number '11' on front chest"},
+}
+
+
 def _base_sku_prefix(theme_id: str) -> str:
     return {
         "pets": "PET",
         "pets_original": "ORG",
         "pets_royal": "ROY",
         "pets_anime": "ANI",
+        "pets_world_cup": "PWC",
         "people": "PPL",
         "world_cup": "WC",
     }.get(theme_id, "X")
@@ -223,6 +248,7 @@ def run_generation(
     overwrite: bool,
     provider: str = "openai",
     prompt_override: str | None = None,
+    output_dir: str | None = None,
 ) -> dict[str, Any]:
     if mode not in MODES:
         raise ValueError(f"Unsupported mode: {mode}")
@@ -241,6 +267,8 @@ def run_generation(
         cmd.append("--overwrite")
     if prompt_override and slot:
         cmd.extend(["--prompt", prompt_override])
+    if output_dir:
+        cmd.extend(["--output-dir", output_dir])
 
     result = subprocess.run(cmd, cwd=ROOT, text=True, capture_output=True, timeout=600, check=False)
     return {
@@ -564,6 +592,13 @@ button:disabled{opacity:.4;cursor:not-allowed!important}
     </div>
   </div>
 
+  <div class="row2" id="teamRow" style="display:none">
+    <div class="field" style="grid-column:1/-1">
+      <label>⚽ Team</label>
+      <select id="fTeam"></select>
+    </div>
+  </div>
+
   <div class="row2">
     <div class="field">
       <label>Purpose</label>
@@ -705,10 +740,11 @@ const SIZES = ['8 x 12 in','12 x 18 in','16 x 24 in','24 x 36 in'];
 // Category → available art styles (id maps to theme_id as `{cat}_{styleId}`)
 const CAT_STYLES = {
   pets: [
-    { id:'classic',  label:'🎨 Classic Portrait',       theme:'pets' },
-    { id:'original', label:'📷 Original Photo Print',   theme:'pets_original' },
-    { id:'royal',    label:'👑 Royal Portrait (AI)',     theme:'pets_royal' },
-    { id:'anime',    label:'🌸 Anime / Kawaii (AI)',     theme:'pets_anime' },
+    { id:'classic',    label:'🎨 Classic Portrait',       theme:'pets' },
+    { id:'original',   label:'📷 Original Photo Print',   theme:'pets_original' },
+    { id:'royal',      label:'👑 Royal Portrait (AI)',     theme:'pets_royal' },
+    { id:'anime',      label:'🌸 Anime / Kawaii (AI)',     theme:'pets_anime' },
+    { id:'world_cup',  label:'⚽ Soccer Kit (AI)',         theme:'pets_world_cup' },
   ],
   people: [
     { id:'classic',  label:'🎨 Classic Portrait',       theme:'people' },
@@ -717,6 +753,29 @@ const CAT_STYLES = {
     { id:'classic',  label:'⚽ Soccer Fan',              theme:'world_cup' },
   ],
 };
+
+const SOCCER_TEAMS = [
+  {id:'argentina',   name:'Argentina',   flag:'🇦🇷', colors:"sky blue and white vertical stripes, pet name '[PET NAME]' and number '10' on front chest"},
+  {id:'france',      name:'France',      flag:'🇫🇷', colors:"deep navy blue jersey, pet name '[PET NAME]' and number '10' on front chest"},
+  {id:'england',     name:'England',     flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', colors:"white jersey with navy collar, pet name '[PET NAME]' and number '9' on front chest"},
+  {id:'brazil',      name:'Brazil',      flag:'🇧🇷', colors:"bright canary yellow jersey with green collar, pet name '[PET NAME]' and number '10' on front chest"},
+  {id:'belgium',     name:'Belgium',     flag:'🇧🇪', colors:"red jersey with black and yellow trim, pet name '[PET NAME]' and number '10' on front chest"},
+  {id:'spain',       name:'Spain',       flag:'🇪🇸', colors:"red jersey with yellow collar, pet name '[PET NAME]' and number '10' on front chest"},
+  {id:'portugal',    name:'Portugal',    flag:'🇵🇹', colors:"dark green jersey with red accents, pet name '[PET NAME]' and number '7' on front chest"},
+  {id:'netherlands', name:'Netherlands', flag:'🇳🇱', colors:"bright orange jersey with black collar, pet name '[PET NAME]' and number '10' on front chest"},
+  {id:'germany',     name:'Germany',     flag:'🇩🇪', colors:"white jersey with black collar, pet name '[PET NAME]' and number '8' on front chest"},
+  {id:'morocco',     name:'Morocco',     flag:'🇲🇦', colors:"red jersey with green trim, pet name '[PET NAME]' and number '22' on front chest"},
+  {id:'croatia',     name:'Croatia',     flag:'🇭🇷', colors:"red and white checkerboard pattern jersey, pet name '[PET NAME]' and number '10' on front chest"},
+  {id:'uruguay',     name:'Uruguay',     flag:'🇺🇾', colors:"pale sky blue jersey with dark collar, pet name '[PET NAME]' and number '9' on front chest"},
+  {id:'colombia',    name:'Colombia',    flag:'🇨🇴', colors:"bright yellow jersey with blue and red sleeve bands, pet name '[PET NAME]' and number '10' on front chest"},
+  {id:'usa',         name:'USA',         flag:'🇺🇸', colors:"white jersey with red and blue stripes, pet name '[PET NAME]' and number '10' on front chest"},
+  {id:'mexico',      name:'Mexico',      flag:'🇲🇽', colors:"dark green jersey with red and white trim, pet name '[PET NAME]' and number '10' on front chest"},
+  {id:'japan',       name:'Japan',       flag:'🇯🇵', colors:"dark navy blue jersey with red collar, pet name '[PET NAME]' and number '10' on front chest"},
+  {id:'senegal',     name:'Senegal',     flag:'🇸🇳', colors:"white jersey with green and yellow pinstripes, pet name '[PET NAME]' and number '10' on front chest"},
+  {id:'switzerland', name:'Switzerland', flag:'🇨🇭', colors:"red jersey with white trim, pet name '[PET NAME]' and number '10' on front chest"},
+  {id:'denmark',     name:'Denmark',     flag:'🇩🇰', colors:"red jersey with white collar and cuffs, pet name '[PET NAME]' and number '10' on front chest"},
+  {id:'australia',   name:'Australia',   flag:'🇦🇺', colors:"gold yellow jersey with green panels, pet name '[PET NAME]' and number '11' on front chest"},
+];
 
 const SLOT_META = {
   main_image: { label:'Closeup / Product Detail', required:true,
@@ -833,6 +892,24 @@ Product Features:
 
 INKERASTORY - Because every story deserves a place on your wall.`,
 
+  pets_world_cup: `INKERASTORY - Your Pet in Their Team's Jersey, on Canvas
+
+Turn your dog or cat into the ultimate soccer fan — wearing their team's jersey, printed on premium canvas wall art.
+
+Each piece is made to order from your pet photo. Choose your team and we transform your pet into a jersey-wearing fan portrait ready to display on match day and every day after.
+
+Perfect for:
+- Soccer fans who love their pets  ·  World Cup season gifts
+- Match day home decor  ·  Fan caves and game rooms
+- Birthday gifts for soccer parents
+
+Product Features:
+- Personalized from your pet photo  ·  Custom team jersey art style
+- Premium HD printing  ·  Fade-resistant inks
+- Print Only or Stretched Canvas  ·  Multiple sizes
+
+INKERASTORY - Because every fan story deserves a place on your wall.`,
+
   world_cup: `INKERASTORY - Ink Your Soccer Story on Canvas
 
 Celebrate the beautiful game with personalized soccer memory wall art. Turn your favorite match-day or family fan photo into a premium canvas.
@@ -855,6 +932,7 @@ const NAME_TPL = {
   pets_royal:    'AI Royal Pet Portrait Canvas | Upload Photo → Royal Oil Painting Style | Dog Cat Gift | INKERASTORY',
   pets_anime:    'AI Anime Pet Portrait Canvas | Upload Photo → Kawaii Style | Custom Dog Cat Art | INKERASTORY',
   people:        'Personalized Portrait Canvas Print | Custom Family Photo Wall Art | Meaningful Gift | INKERASTORY',
+  pets_world_cup:'Custom Pet Soccer Jersey Canvas | Dog Cat in Team Colors | Soccer Fan Gift | INKERASTORY',
   world_cup:     'Custom Soccer Fan Canvas | Personalized Match Day Memory Wall Art | Soccer Gift | INKERASTORY',
 };
 
@@ -867,7 +945,7 @@ const DEFAULT_DIMS = {
   'Stretched Canvas':{weight_lb:.63,length_in:12.60,width_in:8.27, height_in:.79},
 };
 const THEME_SKU_PREFIX = {
-  pets:'PET',pets_original:'ORG',pets_royal:'ROY',pets_anime:'ANI',
+  pets:'PET',pets_original:'ORG',pets_royal:'ROY',pets_anime:'ANI',pets_world_cup:'PWC',
   people:'PPL',world_cup:'WC'
 };
 
@@ -1010,7 +1088,7 @@ async function loadAll() {
 }
 
 const THEME_EMOJI = {
-  pets:'🐾', pets_original:'📷', pets_royal:'👑', pets_anime:'🌸',
+  pets:'🐾', pets_original:'📷', pets_royal:'👑', pets_anime:'🌸', pets_world_cup:'⚽🐾',
   people:'👨‍👩‍👧', world_cup:'⚽',
 };
 
@@ -1147,8 +1225,25 @@ function updateStyleOptions() {
     o.value = s.id; o.textContent = s.label;
     sel.appendChild(o);
   });
-  // restore previous selection if valid
   if ([...sel.options].some(o=>o.value===prev)) sel.value = prev;
+  updateTeamVisibility();
+}
+
+function updateTeamVisibility() {
+  const isWC = getThemeId() === 'pets_world_cup';
+  document.getElementById('teamRow').style.display = isWC ? '' : 'none';
+  if (isWC && !document.getElementById('fTeam').options.length) {
+    const sel = document.getElementById('fTeam');
+    SOCCER_TEAMS.forEach(t => {
+      const o = document.createElement('option');
+      o.value = t.id; o.textContent = `${t.flag} ${t.name}`;
+      sel.appendChild(o);
+    });
+  }
+}
+
+function getSelectedTeam() {
+  return SOCCER_TEAMS.find(t => t.id === document.getElementById('fTeam').value) || null;
 }
 
 function getThemeId() {
@@ -1196,6 +1291,11 @@ function populateForm() {
   document.getElementById('fDesc').value     = l.product_description || '';
   document.getElementById('fAesthetic').value= l.attributes?.style  || 'Minimalist';
   document.getElementById('fPurpose').value  = l.attributes?.occasion|| 'Gift';
+  updateTeamVisibility();
+  if (l.attributes?.team) {
+    const sel = document.getElementById('fTeam');
+    if ([...sel.options].some(o=>o.value===l.attributes.team)) sel.value = l.attributes.team;
+  }
 
   const types = new Set((item.skus||[]).map(s=>s.type));
   document.getElementById('typePrint').checked  = types.size===0||types.has('Print Only');
@@ -1263,7 +1363,7 @@ function setupListeners() {
     updateStyleOptions(); syncActiveTheme(); renderSkuTable(); renderAssets(); renderPreview();
   });
   document.getElementById('fArtStyle').addEventListener('change',()=>{
-    syncActiveTheme(); renderSkuTable(); renderAssets(); renderPreview();
+    updateTeamVisibility(); syncActiveTheme(); renderSkuTable(); renderAssets(); renderPreview();
   });
 
   document.getElementById('fName').addEventListener('input', renderPreview);
@@ -1395,7 +1495,7 @@ function renderAssets() {
 
     const genUrl  = info.image_url;
     const listUrl = urls[slot]||'';
-    const dispUrl = genUrl || listUrl;
+    const dispUrl = listUrl || genUrl;
     const hasImg  = Boolean(dispUrl);
 
     const badge = hasImg
@@ -1510,17 +1610,28 @@ async function generateAll(mode) {
 async function runGeneration(theme, mode, slot, promptOverride) {
   const con      = document.getElementById('console');
   const provider = document.getElementById('providerSel').value;
+  const team     = theme === 'pets_world_cup' ? getSelectedTeam() : null;
   lockBtns(true);
-  con.textContent = `Running ${mode} [${provider}] → ${theme}${slot?':'+slot:''}…`;
+  con.textContent = `Running ${mode} [${provider}] → ${theme}${slot?':'+slot:''}${team?' · '+team.flag+team.name:''}…`;
   try {
     const res = await fetch('/api/generate', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({theme, mode, slot, overwrite:true, provider,
-                            prompt_override: promptOverride}),
+                            prompt_override: promptOverride,
+                            team_id: team?.id || null}),
     });
     const d = await res.json();
     con.textContent = [d.stdout,d.stderr].filter(Boolean).join('\n') || JSON.stringify(d,null,2);
+    // For pets_world_cup: backend returns team-scoped URLs; apply them to this listing so
+    // each listing keeps its own image and doesn't share the theme-level slot.
+    if (d.generated_urls && Object.keys(d.generated_urls).length) {
+      const item = activeItem();
+      if (!item.listing) item.listing = {};
+      if (!item.listing.images) item.listing.images = {};
+      Object.assign(item.listing.images, d.generated_urls);
+      await saveListing(true);
+    }
     await loadAll();
   } catch(e){ con.textContent = String(e); }
   finally { lockBtns(false); }
@@ -1560,6 +1671,7 @@ function collectActiveItem() {
         ...(activeListingData().attributes||{}),
         style:    document.getElementById('fAesthetic').value,
         occasion: document.getElementById('fPurpose').value,
+        ...(getThemeId()==='pets_world_cup' ? {team: document.getElementById('fTeam').value} : {}),
       },
     },
     skus,
@@ -1883,15 +1995,54 @@ class StudioHandler(BaseHTTPRequestHandler):
 
         if p == "/api/generate":
             try:
-                result = run_generation(
-                    theme           = payload.get("theme", "pets"),
-                    mode            = payload.get("mode", "dry-run"),
-                    slot            = payload.get("slot"),
-                    limit           = payload.get("limit"),
-                    overwrite       = bool(payload.get("overwrite", True)),
-                    provider        = payload.get("provider", "openai"),
-                    prompt_override = payload.get("prompt_override"),
-                )
+                theme   = payload.get("theme", "pets")
+                slot    = payload.get("slot")
+                mode    = payload.get("mode", "dry-run")
+                team_id = payload.get("team_id")
+
+                # For pets_world_cup, substitute team placeholders per slot and
+                # write to a team-scoped output dir so each listing stays isolated
+                if theme == "pets_world_cup" and team_id and team_id in SOCCER_TEAMS:
+                    team       = SOCCER_TEAMS[team_id]
+                    wf_cfg     = load_workflow_config()
+                    pwc        = next((t for t in wf_cfg["themes"] if t["id"] == "pets_world_cup"), None)
+                    slots_to_run = [slot] if slot else [a["slot"] for a in (pwc["assets"] if pwc else [])]
+                    output_dir = f"outputs/generated_images/pets_world_cup/{team_id}"
+                    combined   = {"ok": True, "stdout": "", "stderr": "", "returncode": 0, "generated_urls": {}}
+                    for s in slots_to_run:
+                        asset = next((a for a in pwc["assets"] if a["slot"] == s), None) if pwc else None
+                        prompt = asset["prompt"] if asset else None
+                        if prompt:
+                            prompt = (prompt
+                                .replace("{team_name}", team["name"])
+                                .replace("{team_colors}", team["colors"])
+                                .replace("[PET NAME]", "BUDDY"))
+                        r = run_generation(
+                            theme=theme, mode=mode, slot=s,
+                            limit=payload.get("limit"), overwrite=bool(payload.get("overwrite", True)),
+                            provider=payload.get("provider", "openai"), prompt_override=prompt,
+                            output_dir=output_dir,
+                        )
+                        combined["stdout"] += r.get("stdout", "")
+                        combined["stderr"] += r.get("stderr", "")
+                        if not r["ok"]:
+                            combined["ok"] = False
+                            combined["returncode"] = r["returncode"]
+                        if asset and r["ok"]:
+                            gen_path = ROOT / output_dir / Path(asset["filename"]).name
+                            if gen_path.exists():
+                                combined["generated_urls"][s] = file_url(gen_path)
+                    result = combined
+                else:
+                    result = run_generation(
+                        theme           = theme,
+                        mode            = mode,
+                        slot            = slot,
+                        limit           = payload.get("limit"),
+                        overwrite       = bool(payload.get("overwrite", True)),
+                        provider        = payload.get("provider", "openai"),
+                        prompt_override = payload.get("prompt_override"),
+                    )
             except Exception as e:
                 json_response(self, 400, {"ok": False, "error": str(e)}); return
             json_response(self, 200 if result["ok"] else 500, result)

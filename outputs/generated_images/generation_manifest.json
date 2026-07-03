@@ -1,27 +1,27 @@
 {
-  "created_at": "2026-06-13T04:36:40Z",
+  "created_at": "2026-06-18T14:17:12Z",
   "mode": "live",
   "assets": [
     {
-      "theme_id": "pets",
-      "slot": "image_6",
-      "kind": "listing-support",
-      "filename": "pets_06_print_flatlay.png",
-      "output_path": "outputs/generated_images/pets/pets_06_print_flatlay.png",
+      "theme_id": "pets_world_cup",
+      "slot": "image_2",
+      "kind": "viral-creative",
+      "filename": "pets_world_cup_02_before_after.png",
+      "output_path": "outputs/generated_images/pets_world_cup/pets_world_cup_02_before_after.png",
       "model": "gpt-image-1.5",
       "provider": "openai",
       "size": "1024x1024",
       "quality": "medium",
       "output_format": "png",
-      "prompt": "Use case: product-mockup\nAsset type: TikTok Shop secondary product image — Print Only flat mockup\nPrimary request: Create a clean product image showing an INKERASTORY custom pet portrait as a flat unframed art print.\nScene/backdrop: white marble or light wood surface, slight-angle flat-lay, minimal clean styling with a small plant or mug for scale.\nSubject: one flat unframed matte art print showing a custom dog and cat portrait, clean white border, no frame, no canvas stretcher bars — clearly a paper print.\nComposition: square 1:1, print centered, soft shadow under the paper edges showing it is flat and thin.\nStyle: premium flat-lay product photography, bright natural light, matte paper finish clearly visible — not a canvas, no 3D depth, no wrapped edges.\nText policy: no overlay text, no watermark.\nAvoid: canvas texture, stretcher bars, frame, 3D gallery-wrap depth, watermarks, platform UI",
+      "prompt": "Use case: ads-marketing\nAsset type: TikTok Shop secondary product image / ad creative\nPrimary request: Create a before-and-after comparison for INKERASTORY pet soccer jersey portrait canvas.\nLeft panel: a regular casual phone photo of a dog or cat.\nRight panel: the same pet as a beautiful printed canvas, wearing a miniature soccer jersey in sky blue and white vertical stripes, pet name 'BUDDY' and number '10' on front chest (Argentina team colors), no official logos.\nComposition: square 1:1, clean split panel, transformation arrow between panels.\nStyle: clean engaging lifestyle infographic, bright and fun.\nText policy: simple labels 'Your Photo' / 'Your Canvas' only, no watermarks.\nAvoid: exact reproduction of official trademarked logos or registered crests, watermarks, platform UI",
       "status": "generated",
-      "openai_request_id": "req_97db7008852d47d996481e252e1b04f8",
-      "client_request_id": "inkerastory-image-agent-dfe85d63-ec53-4fda-abaa-f100a1605396",
+      "openai_request_id": "req_315a30ee52dc42d5bfc427bc96862884",
+      "client_request_id": "inkerastory-image-agent-cb8af56f-6932-4a11-b9fe-7abdf0cfcfe5",
       "revised_prompt": null,
       "validation": {
         "exists": true,
-        "path": "outputs/generated_images/pets/pets_06_print_flatlay.png",
-        "bytes": 1662500,
+        "path": "outputs/generated_images/pets_world_cup/pets_world_cup_02_before_after.png",
+        "bytes": 1797666,
         "dimensions": [
           1024,
           1024

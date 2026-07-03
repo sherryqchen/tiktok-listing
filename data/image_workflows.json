@@ -298,6 +298,60 @@
       ]
     },
     {
+      "id": "pets_world_cup",
+      "display_name": "Pet Soccer Kit Portrait",
+      "positioning": "Your pet wearing their team's soccer jersey — World Cup season gift for fans.",
+      "compliance_notes": [
+        "Use generic jersey colors and stripe patterns only — no official team logos, crests, or badges.",
+        "Reference team by color scheme and name in prompt only; final image must show no identifiable marks.",
+        "Pet face must be the primary focus; jersey is secondary."
+      ],
+      "assets": [
+        {
+          "slot": "main_image",
+          "kind": "listing-compliant",
+          "filename": "pets_world_cup_01_main_jersey.png",
+          "hook": "Pet in team jersey — instantly recognizable gift for soccer fans.",
+          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop main product image\nPrimary request: Create a clean ecommerce product image for INKERASTORY personalized pet portrait canvas — soccer kit edition.\nScene/backdrop: pure white studio background, soft shadow only under the canvas, no clutter.\nSubject: one rectangular stretched canvas showing a joyful custom portrait of a dog or cat wearing a miniature soccer jersey in {team_colors} ({team_name} team colors), no official logos or badges. Pet face expressive and front-facing, fur detail realistic.\nComposition: square 1:1, product centered, canvas fills about 85% of frame, front angle with slight side depth.\nStyle: premium ecommerce photography, bright clean light, high-resolution realistic canvas texture.\nText policy: no overlay text, no watermark, no platform UI.\nAvoid: exact reproduction of official trademarked team crests or registered logos, watermarks, distorted pet anatomy, copyrighted characters"
+        },
+        {
+          "slot": "image_2",
+          "kind": "viral-creative",
+          "filename": "pets_world_cup_02_before_after.png",
+          "hook": "Before/After shows the transformation and the jersey detail.",
+          "prompt": "Use case: ads-marketing\nAsset type: TikTok Shop secondary product image / ad creative\nPrimary request: Create a before-and-after comparison for INKERASTORY pet soccer jersey portrait canvas.\nLeft panel: a regular casual phone photo of a dog or cat.\nRight panel: the same pet as a beautiful printed canvas, wearing a miniature soccer jersey in {team_colors} ({team_name} team colors), no official logos.\nComposition: square 1:1, clean split panel, transformation arrow between panels.\nStyle: clean engaging lifestyle infographic, bright and fun.\nText policy: simple labels 'Your Photo' / 'Your Canvas' only, no watermarks.\nAvoid: exact reproduction of official trademarked logos or registered crests, watermarks, platform UI"
+        },
+        {
+          "slot": "image_3",
+          "kind": "viral-creative",
+          "filename": "pets_world_cup_03_fan_gift.png",
+          "hook": "Fan receiving the canvas — emotional gift angle for soccer season.",
+          "prompt": "Use case: ads-marketing\nAsset type: TikTok Shop secondary product image\nPrimary request: Create a lifestyle scene of a soccer fan receiving an INKERASTORY pet jersey portrait canvas as a gift.\nScene/backdrop: warm living room with soccer match on TV in background, fan scarves visible, celebratory mood.\nSubject: a smiling fan holding or unwrapping a custom canvas showing their pet wearing a soccer jersey in {team_colors} ({team_name} team colors), no official logos. Canvas is the focal point.\nComposition: square 1:1, person and canvas both visible, joyful fan energy.\nStyle: photorealistic warm lifestyle photography, energetic and personal.\nText policy: no overlay text, no watermark.\nAvoid: exact reproduction of official trademarked logos, copyrighted branding, celebrity athletes, distorted hands, watermarks"
+        },
+        {
+          "slot": "image_4",
+          "kind": "listing-support",
+          "filename": "pets_world_cup_04_fan_room.png",
+          "hook": "Fan room mockup — shows the canvas in a match-day context.",
+          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop room mockup\nPrimary request: Create a fan room mockup for INKERASTORY pet soccer jersey canvas wall art.\nScene/backdrop: bright modern living room or game room with subtle soccer fan decor (scarves in matching colors), no official logos.\nSubject: a large rectangular canvas portrait of a pet wearing a soccer jersey in {team_colors} ({team_name} team colors), no official logos, hanging prominently on the wall.\nComposition: square 1:1, canvas large and centered, room energy is celebratory and warm.\nStyle: premium interior lifestyle photography, enthusiastic fan aesthetic.\nText policy: no overlay text, no watermark.\nAvoid: exact reproduction of official trademarked logos or copyrighted symbols, watermarks"
+        },
+        {
+          "slot": "image_5",
+          "kind": "listing-support",
+          "filename": "pets_world_cup_05_size_chart.png",
+          "hook": "Size chart with soccer ball for scale — helps buyers pick the right size.",
+          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop size comparison chart\nPrimary request: Create a size comparison display for a pet soccer jersey canvas product line.\nScene/backdrop: bright wall with subtle soccer-themed decor, straight-on eye-level camera angle for all four canvases.\nSubject: four rectangular stretched canvases in ascending size order in a horizontal row, each showing a different pet wearing a soccer jersey in {team_colors} ({team_name} team colors), no official logos. Sizes: 8×12 in (left), 12×18 in, 16×24 in, 24×36 in (right). Each canvas has its size label below.\nA soccer ball near the 8×12 canvas provides a real-world scale reference.\nComposition: square 1:1, all canvases on the same wall at the same baseline, even spacing.\nStyle: premium lifestyle photography, bright energetic consistent lighting.\nText policy: size labels only — '8×12 in', '12×18 in', '16×24 in', '24×36 in' — no other overlays.\nAvoid: exact reproduction of official trademarked logos or registered crests, watermarks, perspective distortion"
+        },
+        {
+          "slot": "image_6",
+          "kind": "listing-support",
+          "filename": "pets_world_cup_06_print_flatlay.png",
+          "hook": "Flat print mockup — shows the print-only variant clearly.",
+          "prompt": "Use case: product-mockup\nAsset type: TikTok Shop secondary product image — Print Only flat mockup\nPrimary request: Create a product image showing an INKERASTORY pet soccer jersey portrait as a flat unframed art print.\nScene/backdrop: dark wood surface, flat-lay with a mini soccer ball and team-colored ribbon as props, dynamic side-lighting.\nSubject: one flat unframed matte print showing a pet wearing a soccer jersey in {team_colors} ({team_name} team colors), no official logos, clean white border — clearly a paper print, no frame or canvas.\nComposition: square 1:1, print centered, shadow under paper edges showing it is flat and thin.\nStyle: premium flat-lay product photography, bold sports energy, clearly a flat paper print not a canvas.\nText policy: no overlay text, no watermark.\nAvoid: exact reproduction of official trademarked logos, canvas texture, stretcher bars, 3D depth, watermarks"
+        }
+      ]
+    },
+    {
       "id": "people",
       "display_name": "Family & Portrait Memories",
       "positioning": "Evergreen gift angle for families, couples, weddings, and milestone portrait moments.",
