@@ -101,10 +101,64 @@ The studio shows:
 - prompts for each asset
 - a multi-listing manager for creating, duplicating, deleting, and switching between products
 - buttons for dry-run, mock generation, and live generation
+- buttons for AI copy generation, TikTok media upload, Shop API payload review, and draft submission
 
 The listing config supports multiple products in `data/inkerastory_listing.json` under `listings`.
 Each product keeps its own product name, description, image URLs, theme, attributes, and SKUs.
 Export writes every product's SKU rows into the same TikTok bulk upload workbook.
+
+## AI Copy And Shop API Listing
+
+The end-to-end flow is:
+
+1. Generate or paste product images in Listing Studio.
+2. Click `AI 生成标题/五点/关键词` to update selected listings.
+3. Click `上传所有图片到 TikTok 媒体库` if images are still local `/files/...` URLs.
+4. Click `生成 Shop API Payload` and review the JSON files in `outputs/tiktok_shop_payloads/`.
+5. Click `提交 TikTok Shop 草稿` only after payload review and TikTok credentials/category fields are configured.
+
+Required `.env` values for AI copy:
+
+```bash
+OPENAI_API_KEY="your_openai_api_key"
+OPENAI_TEXT_MODEL="gpt-5.1"
+```
+
+Required `.env` values for TikTok media upload:
+
+```bash
+TIKTOK_APP_KEY="your_app_key"
+TIKTOK_APP_SECRET="your_app_secret"
+TIKTOK_ACCESS_TOKEN="your_shop_access_token"
+```
+
+Required `.env` values for Shop API draft creation:
+
+```bash
+TIKTOK_SHOP_CIPHER="your_shop_cipher"
+TIKTOK_CATEGORY_ID="your_category_id"
+TIKTOK_WAREHOUSE_ID="your_warehouse_id"
+TIKTOK_CURRENCY="USD"
+TIKTOK_PRODUCT_SAVE_MODE="DRAFT"
+```
+
+CLI examples:
+
+```bash
+# Test AI copy locally without an API call
+python3 scripts/listing_copy_agent.py --mock --apply
+
+# Generate real AI copy for one listing
+python3 scripts/listing_copy_agent.py --listing-id item_1 --apply
+
+# Build reviewable Shop API payloads without submitting
+python3 scripts/tiktok_shop_publish.py
+
+# Submit selected listings to TikTok Shop as configured by TIKTOK_PRODUCT_SAVE_MODE
+python3 scripts/tiktok_shop_publish.py --listing-id item_1 --submit
+```
+
+`scripts/tiktok_shop_publish.py` always writes the outgoing JSON to `outputs/tiktok_shop_payloads/` first. If your TikTok category requires extra product attributes, set `TIKTOK_CATEGORY_ATTRIBUTES_JSON` or add a per-listing `tiktok.category_attributes` array in `data/inkerastory_listing.json`.
 
 ## Apply Generated Image URLs
 

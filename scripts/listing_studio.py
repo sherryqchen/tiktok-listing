@@ -51,8 +51,50 @@ def file_url(path: Path) -> str:
     return "/files/" + urllib.parse.quote(path.relative_to(ROOT).as_posix())
 
 
+def local_file_from_url(url: str) -> Path | None:
+    if not url.startswith("/files/"):
+        return None
+    path = (ROOT / urllib.parse.unquote(url.removeprefix("/files/"))).resolve()
+    try:
+        path.relative_to(ROOT)
+    except ValueError:
+        return None
+    return path if path.is_file() else None
+
+
 def asset_path(theme_id: str, filename: str) -> Path:
     return OUTPUT_DIR / theme_id / Path(filename).name
+
+
+def generated_asset_path(output_dir: str, theme_id: str, filename: str) -> Path:
+    return ROOT / output_dir / theme_id / Path(filename).name
+
+
+def safe_path_segment(value: Any, fallback: str) -> str:
+    safe = "".join(ch if ch.isalnum() or ch in "-_" else "_" for ch in str(value or ""))
+    return safe.strip("_") or fallback
+
+
+def listing_output_dir(theme_id: str, listing_id: str, team_id: str | None = None) -> str:
+    listing_segment = safe_path_segment(listing_id, "unassigned")
+    parts = ["outputs", "generated_images", "listings", listing_segment]
+    if theme_id == "pets_world_cup" and team_id:
+        parts.append(safe_path_segment(team_id, "team"))
+    return "/".join(parts)
+
+
+def team_asset_urls(theme_id: str, filename: str) -> dict[str, str]:
+    theme_dir = OUTPUT_DIR / theme_id
+    if not theme_dir.is_dir():
+        return {}
+    urls: dict[str, str] = {}
+    for team_dir in theme_dir.iterdir():
+        if not team_dir.is_dir():
+            continue
+        path = team_dir / theme_id / Path(filename).name
+        if path.is_file():
+            urls[team_dir.name] = file_url(path)
+    return urls
 
 
 # ── data access ──────────────────────────────────────────────────────────────
@@ -111,26 +153,26 @@ def normalize_listing_config(config: dict[str, Any]) -> dict[str, Any]:
 
 
 SOCCER_TEAMS: dict[str, dict[str, str]] = {
-    "argentina":   {"name": "Argentina",   "colors": "sky blue and white vertical stripes, pet name '[PET NAME]' and number '10' on front chest"},
-    "france":      {"name": "France",      "colors": "deep navy blue jersey, pet name '[PET NAME]' and number '10' on front chest"},
-    "england":     {"name": "England",     "colors": "white jersey with navy collar, pet name '[PET NAME]' and number '9' on front chest"},
-    "brazil":      {"name": "Brazil",      "colors": "bright canary yellow jersey with green collar, pet name '[PET NAME]' and number '10' on front chest"},
-    "belgium":     {"name": "Belgium",     "colors": "red jersey with black and yellow trim, pet name '[PET NAME]' and number '10' on front chest"},
-    "spain":       {"name": "Spain",       "colors": "red jersey with yellow collar, pet name '[PET NAME]' and number '10' on front chest"},
-    "portugal":    {"name": "Portugal",    "colors": "dark green jersey with red accents, pet name '[PET NAME]' and number '7' on front chest"},
-    "netherlands": {"name": "Netherlands", "colors": "bright orange jersey with black collar, pet name '[PET NAME]' and number '10' on front chest"},
-    "germany":     {"name": "Germany",     "colors": "white jersey with black collar, pet name '[PET NAME]' and number '8' on front chest"},
-    "morocco":     {"name": "Morocco",     "colors": "red jersey with green trim, pet name '[PET NAME]' and number '22' on front chest"},
-    "croatia":     {"name": "Croatia",     "colors": "red and white checkerboard pattern jersey, pet name '[PET NAME]' and number '10' on front chest"},
-    "uruguay":     {"name": "Uruguay",     "colors": "pale sky blue jersey with dark collar, pet name '[PET NAME]' and number '9' on front chest"},
-    "colombia":    {"name": "Colombia",    "colors": "bright yellow jersey with blue and red sleeve bands, pet name '[PET NAME]' and number '10' on front chest"},
-    "usa":         {"name": "USA",         "colors": "white jersey with red and blue stripes, pet name '[PET NAME]' and number '10' on front chest"},
-    "mexico":      {"name": "Mexico",      "colors": "dark green jersey with red and white trim, pet name '[PET NAME]' and number '10' on front chest"},
-    "japan":       {"name": "Japan",       "colors": "dark navy blue jersey with red collar, pet name '[PET NAME]' and number '10' on front chest"},
-    "senegal":     {"name": "Senegal",     "colors": "white jersey with green and yellow pinstripes, pet name '[PET NAME]' and number '10' on front chest"},
-    "switzerland": {"name": "Switzerland", "colors": "red jersey with white trim, pet name '[PET NAME]' and number '10' on front chest"},
-    "denmark":     {"name": "Denmark",     "colors": "red jersey with white collar and cuffs, pet name '[PET NAME]' and number '10' on front chest"},
-    "australia":   {"name": "Australia",   "colors": "gold yellow jersey with green panels, pet name '[PET NAME]' and number '11' on front chest"},
+    "argentina":   {"name": "Argentina",   "colors": "sky blue and white vertical stripes, pet name '[PET NAME]' and number '0' on front chest"},
+    "france":      {"name": "France",      "colors": "deep navy blue jersey, pet name '[PET NAME]' and number '0' on front chest"},
+    "england":     {"name": "England",     "colors": "white jersey with navy collar, pet name '[PET NAME]' and number '0' on front chest"},
+    "brazil":      {"name": "Brazil",      "colors": "bright canary yellow jersey with green collar, pet name '[PET NAME]' and number '0' on front chest"},
+    "belgium":     {"name": "Belgium",     "colors": "red jersey with black and yellow trim, pet name '[PET NAME]' and number '0' on front chest"},
+    "spain":       {"name": "Spain",       "colors": "red jersey with yellow collar, pet name '[PET NAME]' and number '0' on front chest"},
+    "portugal":    {"name": "Portugal",    "colors": "dark green jersey with red accents, pet name '[PET NAME]' and number '0' on front chest"},
+    "netherlands": {"name": "Netherlands", "colors": "bright orange jersey with black collar, pet name '[PET NAME]' and number '0' on front chest"},
+    "germany":     {"name": "Germany",     "colors": "white jersey with black collar, pet name '[PET NAME]' and number '0' on front chest"},
+    "morocco":     {"name": "Morocco",     "colors": "red jersey with green trim, pet name '[PET NAME]' and number '0' on front chest"},
+    "croatia":     {"name": "Croatia",     "colors": "red and white checkerboard pattern jersey, pet name '[PET NAME]' and number '0' on front chest"},
+    "uruguay":     {"name": "Uruguay",     "colors": "pale sky blue jersey with dark collar, pet name '[PET NAME]' and number '0' on front chest"},
+    "colombia":    {"name": "Colombia",    "colors": "bright yellow jersey with blue and red sleeve bands, pet name '[PET NAME]' and number '0' on front chest"},
+    "usa":         {"name": "USA",         "colors": "white jersey with red and blue stripes, pet name '[PET NAME]' and number '0' on front chest"},
+    "mexico":      {"name": "Mexico",      "colors": "dark green jersey with red and white trim, pet name '[PET NAME]' and number '0' on front chest"},
+    "japan":       {"name": "Japan",       "colors": "dark navy blue jersey with red collar, pet name '[PET NAME]' and number '0' on front chest"},
+    "senegal":     {"name": "Senegal",     "colors": "white jersey with green and yellow pinstripes, pet name '[PET NAME]' and number '0' on front chest"},
+    "switzerland": {"name": "Switzerland", "colors": "red jersey with white trim, pet name '[PET NAME]' and number '0' on front chest"},
+    "denmark":     {"name": "Denmark",     "colors": "red jersey with white collar and cuffs, pet name '[PET NAME]' and number '0' on front chest"},
+    "australia":   {"name": "Australia",   "colors": "gold yellow jersey with green panels, pet name '[PET NAME]' and number '0' on front chest"},
 }
 
 
@@ -214,6 +256,7 @@ def build_state() -> dict[str, Any]:
                 "prompt":    asset["prompt"],
                 "exists":    exists,
                 "image_url": file_url(p) if exists else None,
+                "team_image_urls": team_asset_urls(theme["id"], asset["filename"]),
                 "path":      str(p.relative_to(ROOT)),
             })
         themes.append({
@@ -330,21 +373,33 @@ def run_export(listing_ids: list[str] | None = None) -> dict[str, Any]:
     return {"ok": True, "path": str(out.relative_to(ROOT)), "rows": rows, "stdout": result.stdout}
 
 
-def build_images_zip(theme_id: str) -> tuple[str, bytes, int]:
+def build_images_zip(theme_id: str, listing_id: str | None = None) -> tuple[str, bytes, int]:
     config = load_workflow_config()
     theme = next((item for item in config["themes"] if item["id"] == theme_id), None)
     if not theme:
         raise ValueError(f"Theme not found: {theme_id}")
 
     files: list[tuple[str, Path]] = []
-    for asset in theme.get("assets", []):
-        path = asset_path(theme_id, asset.get("filename", ""))
-        if path.is_file():
-            files.append((asset.get("slot", path.stem), path))
+    if listing_id:
+        listing_config = load_listing_config()
+        item = next((entry for entry in listing_config.get("listings", []) if entry.get("id") == listing_id), None)
+        images = item.get("listing", {}).get("images", {}) if item else {}
+        for slot in ["main_image", "image_2", "image_3", "image_4", "image_5", "image_6"]:
+            path = local_file_from_url(str(images.get(slot, "")))
+            if path:
+                files.append((slot, path))
+
+    if not files:
+        for asset in theme.get("assets", []):
+            path = asset_path(theme_id, asset.get("filename", ""))
+            if path.is_file():
+                files.append((asset.get("slot", path.stem), path))
     if not files:
         raise FileNotFoundError(f"No generated images found for {theme_id}.")
 
     safe_theme = "".join(ch if ch.isalnum() or ch in "-_" else "_" for ch in theme_id)
+    if listing_id:
+        safe_theme = f"{safe_theme}_{safe_path_segment(listing_id, 'listing')}"
     buffer = io.BytesIO()
     order_lines = []
     with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as archive:
@@ -727,6 +782,18 @@ button:disabled{opacity:.4;cursor:not-allowed!important}
     <div id="xlsxInfo" style="font-size:10px;color:var(--muted);margin-top:4px;min-height:14px"></div>
   </div>
 
+  <div class="exp-box">
+    <div class="exp-box-title">批量自动化</div>
+    <button id="batchCreateBtn" style="width:100%;margin-bottom:5px">⚡ 批量建所有风格 Listing</button>
+    <button id="batchGenBtn" style="width:100%;margin-bottom:5px">🖼 批量生成所有 Listing 图片</button>
+    <button id="aiCopyBtn" style="width:100%;margin-bottom:5px">✍️ AI 生成标题/五点/关键词</button>
+    <button id="uploadTikTokBtn" style="width:100%;margin-bottom:5px" disabled>📤 上传所有图片到 TikTok 媒体库</button>
+    <button id="shopPayloadBtn" style="width:100%;margin-bottom:5px">🧾 生成 Shop API Payload</button>
+    <button id="shopSubmitBtn" class="success" style="width:100%;margin-bottom:5px" disabled>🚀 提交 TikTok Shop 草稿</button>
+    <div id="tiktokStatus" style="font-size:10px;color:var(--muted);min-height:14px">检查 TikTok 配置中…</div>
+    <div class="console" id="batchConsole" style="margin-top:8px;max-height:90px;display:none">Ready.</div>
+  </div>
+
   <div class="slabel">Image URLs (for production export)</div>
   <div id="urlInputs"></div>
 </div>
@@ -755,26 +822,26 @@ const CAT_STYLES = {
 };
 
 const SOCCER_TEAMS = [
-  {id:'argentina',   name:'Argentina',   flag:'🇦🇷', colors:"sky blue and white vertical stripes, pet name '[PET NAME]' and number '10' on front chest"},
-  {id:'france',      name:'France',      flag:'🇫🇷', colors:"deep navy blue jersey, pet name '[PET NAME]' and number '10' on front chest"},
-  {id:'england',     name:'England',     flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', colors:"white jersey with navy collar, pet name '[PET NAME]' and number '9' on front chest"},
-  {id:'brazil',      name:'Brazil',      flag:'🇧🇷', colors:"bright canary yellow jersey with green collar, pet name '[PET NAME]' and number '10' on front chest"},
-  {id:'belgium',     name:'Belgium',     flag:'🇧🇪', colors:"red jersey with black and yellow trim, pet name '[PET NAME]' and number '10' on front chest"},
-  {id:'spain',       name:'Spain',       flag:'🇪🇸', colors:"red jersey with yellow collar, pet name '[PET NAME]' and number '10' on front chest"},
-  {id:'portugal',    name:'Portugal',    flag:'🇵🇹', colors:"dark green jersey with red accents, pet name '[PET NAME]' and number '7' on front chest"},
-  {id:'netherlands', name:'Netherlands', flag:'🇳🇱', colors:"bright orange jersey with black collar, pet name '[PET NAME]' and number '10' on front chest"},
-  {id:'germany',     name:'Germany',     flag:'🇩🇪', colors:"white jersey with black collar, pet name '[PET NAME]' and number '8' on front chest"},
-  {id:'morocco',     name:'Morocco',     flag:'🇲🇦', colors:"red jersey with green trim, pet name '[PET NAME]' and number '22' on front chest"},
-  {id:'croatia',     name:'Croatia',     flag:'🇭🇷', colors:"red and white checkerboard pattern jersey, pet name '[PET NAME]' and number '10' on front chest"},
-  {id:'uruguay',     name:'Uruguay',     flag:'🇺🇾', colors:"pale sky blue jersey with dark collar, pet name '[PET NAME]' and number '9' on front chest"},
-  {id:'colombia',    name:'Colombia',    flag:'🇨🇴', colors:"bright yellow jersey with blue and red sleeve bands, pet name '[PET NAME]' and number '10' on front chest"},
-  {id:'usa',         name:'USA',         flag:'🇺🇸', colors:"white jersey with red and blue stripes, pet name '[PET NAME]' and number '10' on front chest"},
-  {id:'mexico',      name:'Mexico',      flag:'🇲🇽', colors:"dark green jersey with red and white trim, pet name '[PET NAME]' and number '10' on front chest"},
-  {id:'japan',       name:'Japan',       flag:'🇯🇵', colors:"dark navy blue jersey with red collar, pet name '[PET NAME]' and number '10' on front chest"},
-  {id:'senegal',     name:'Senegal',     flag:'🇸🇳', colors:"white jersey with green and yellow pinstripes, pet name '[PET NAME]' and number '10' on front chest"},
-  {id:'switzerland', name:'Switzerland', flag:'🇨🇭', colors:"red jersey with white trim, pet name '[PET NAME]' and number '10' on front chest"},
-  {id:'denmark',     name:'Denmark',     flag:'🇩🇰', colors:"red jersey with white collar and cuffs, pet name '[PET NAME]' and number '10' on front chest"},
-  {id:'australia',   name:'Australia',   flag:'🇦🇺', colors:"gold yellow jersey with green panels, pet name '[PET NAME]' and number '11' on front chest"},
+  {id:'argentina',   name:'Argentina',   flag:'🇦🇷', colors:"sky blue and white vertical stripes, pet name '[PET NAME]' and number '0' on front chest"},
+  {id:'france',      name:'France',      flag:'🇫🇷', colors:"deep navy blue jersey, pet name '[PET NAME]' and number '0' on front chest"},
+  {id:'england',     name:'England',     flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', colors:"white jersey with navy collar, pet name '[PET NAME]' and number '0' on front chest"},
+  {id:'brazil',      name:'Brazil',      flag:'🇧🇷', colors:"bright canary yellow jersey with green collar, pet name '[PET NAME]' and number '0' on front chest"},
+  {id:'belgium',     name:'Belgium',     flag:'🇧🇪', colors:"red jersey with black and yellow trim, pet name '[PET NAME]' and number '0' on front chest"},
+  {id:'spain',       name:'Spain',       flag:'🇪🇸', colors:"red jersey with yellow collar, pet name '[PET NAME]' and number '0' on front chest"},
+  {id:'portugal',    name:'Portugal',    flag:'🇵🇹', colors:"dark green jersey with red accents, pet name '[PET NAME]' and number '0' on front chest"},
+  {id:'netherlands', name:'Netherlands', flag:'🇳🇱', colors:"bright orange jersey with black collar, pet name '[PET NAME]' and number '0' on front chest"},
+  {id:'germany',     name:'Germany',     flag:'🇩🇪', colors:"white jersey with black collar, pet name '[PET NAME]' and number '0' on front chest"},
+  {id:'morocco',     name:'Morocco',     flag:'🇲🇦', colors:"red jersey with green trim, pet name '[PET NAME]' and number '0' on front chest"},
+  {id:'croatia',     name:'Croatia',     flag:'🇭🇷', colors:"red and white checkerboard pattern jersey, pet name '[PET NAME]' and number '0' on front chest"},
+  {id:'uruguay',     name:'Uruguay',     flag:'🇺🇾', colors:"pale sky blue jersey with dark collar, pet name '[PET NAME]' and number '0' on front chest"},
+  {id:'colombia',    name:'Colombia',    flag:'🇨🇴', colors:"bright yellow jersey with blue and red sleeve bands, pet name '[PET NAME]' and number '0' on front chest"},
+  {id:'usa',         name:'USA',         flag:'🇺🇸', colors:"white jersey with red and blue stripes, pet name '[PET NAME]' and number '0' on front chest"},
+  {id:'mexico',      name:'Mexico',      flag:'🇲🇽', colors:"dark green jersey with red and white trim, pet name '[PET NAME]' and number '0' on front chest"},
+  {id:'japan',       name:'Japan',       flag:'🇯🇵', colors:"dark navy blue jersey with red collar, pet name '[PET NAME]' and number '0' on front chest"},
+  {id:'senegal',     name:'Senegal',     flag:'🇸🇳', colors:"white jersey with green and yellow pinstripes, pet name '[PET NAME]' and number '0' on front chest"},
+  {id:'switzerland', name:'Switzerland', flag:'🇨🇭', colors:"red jersey with white trim, pet name '[PET NAME]' and number '0' on front chest"},
+  {id:'denmark',     name:'Denmark',     flag:'🇩🇰', colors:"red jersey with white collar and cuffs, pet name '[PET NAME]' and number '0' on front chest"},
+  {id:'australia',   name:'Australia',   flag:'🇦🇺', colors:"gold yellow jersey with green panels, pet name '[PET NAME]' and number '0' on front chest"},
 ];
 
 const SLOT_META = {
@@ -1003,6 +1070,23 @@ function activeListingData() {
   return activeItem().listing || {};
 }
 
+function itemById(id) {
+  listing = normalizeListingConfig(listing);
+  return listing.listings.find(item=>item.id===id) || null;
+}
+
+function isLocalGeneratedUrl(url) {
+  return String(url||'').startsWith('/files/outputs/generated_images/');
+}
+
+function withoutLocalGeneratedImages(images) {
+  const kept = {};
+  Object.entries(images||{}).forEach(([slot, url]) => {
+    if (!isLocalGeneratedUrl(url)) kept[slot] = url;
+  });
+  return kept;
+}
+
 function listingLabel(item, idx) {
   const name = item.listing?.product_name?.trim();
   return name ? name.slice(0, 64) : `Item ${idx+1}`;
@@ -1150,10 +1234,7 @@ function renderExportSummary() {
     const name = item.listing?.product_name?.trim() || 'Untitled Listing';
     const skuCount = item.skus?.length || 0;
     const imgCount = Object.values(item.listing?.images||{}).filter(Boolean).length;
-    const themeAssets = imgState.themes?.find(t=>t.id===item.theme_id)?.assets||[];
-    const genCount = themeAssets.filter(a=>a.image_url).length;
-    const imgTotal = Math.max(imgCount + genCount, 0);
-    const ready = skuCount > 0 && (imgCount > 0 || genCount > 0);
+    const ready = skuCount > 0 && imgCount > 0;
 
     const row = document.createElement('div');
     row.className = 'exp-row' + (isActive?' active-row':'');
@@ -1165,7 +1246,7 @@ function renderExportSummary() {
       <label for="${ckId}" class="exp-row-icon" style="cursor:pointer">${emoji}</label>
       <div class="exp-row-info" style="cursor:pointer">
         <div class="exp-row-name" title="${name}">${name.slice(0,36)+(name.length>36?'…':'')}</div>
-        <div class="exp-row-meta">${skuCount} SKUs · ${imgTotal > 0 ? imgTotal+' images' : 'No images yet'}</div>
+        <div class="exp-row-meta">${skuCount} SKUs · ${imgCount > 0 ? imgCount+' images' : 'No images yet'}</div>
       </div>
       <span class="exp-row-status ${ready?'ok':'warn'}">${ready?'Ready':'Incomplete'}</span>`;
 
@@ -1246,6 +1327,12 @@ function getSelectedTeam() {
   return SOCCER_TEAMS.find(t => t.id === document.getElementById('fTeam').value) || null;
 }
 
+function clearStaleTeamGeneratedImages() {
+  if (getThemeId() !== 'pets_world_cup') return;
+  const item = activeItem();
+  if (item.listing) item.listing.images = withoutLocalGeneratedImages(item.listing.images);
+}
+
 function getThemeId() {
   const cat   = document.getElementById('fCategory').value;
   const style = document.getElementById('fArtStyle').value;
@@ -1259,6 +1346,7 @@ function syncActiveTheme() {
   if (item.theme_id !== themeId) {
     item.theme_id = themeId;
     item.sku_prefix = uniqueSkuPrefix(themeId, item.id);
+    if (item.listing) item.listing.images = withoutLocalGeneratedImages(item.listing.images);
   }
 }
 
@@ -1368,6 +1456,10 @@ function setupListeners() {
 
   document.getElementById('fName').addEventListener('input', renderPreview);
   document.getElementById('fDesc').addEventListener('input', renderPreview);
+  document.getElementById('fTeam').addEventListener('change',()=>{
+    clearStaleTeamGeneratedImages();
+    renderAssets(); renderPreview(); renderUrlInputs();
+  });
 
   document.getElementById('fillNameBtn').addEventListener('click',()=>{
     document.getElementById('fName').value = NAME_TPL[getThemeId()]||'';
@@ -1385,7 +1477,14 @@ function setupListeners() {
   document.getElementById('exportBtn').addEventListener('click',  exportXLSX);
   document.getElementById('xlsxDownloadBtn').addEventListener('click', downloadXLSX);
   document.getElementById('downloadImagesBtn').addEventListener('click', downloadImagesZip);
+  document.getElementById('batchCreateBtn').addEventListener('click', batchCreateListings);
+  document.getElementById('batchGenBtn').addEventListener('click', ()=>batchGenerateAll('live'));
+  document.getElementById('aiCopyBtn').addEventListener('click', generateAICopy);
+  document.getElementById('uploadTikTokBtn').addEventListener('click', uploadAllToTikTok);
+  document.getElementById('shopPayloadBtn').addEventListener('click', ()=>publishToTikTokShop(true));
+  document.getElementById('shopSubmitBtn').addEventListener('click', ()=>publishToTikTokShop(false));
   checkExistingXLSX();
+  checkTikTokStatus();
 }
 
 async function switchListing(id) {
@@ -1436,6 +1535,7 @@ async function duplicateListing() {
   copy.id = uniqueItemId();
   copy.sku_prefix = uniqueSkuPrefix(copy.theme_id || getThemeId());
   copy.listing.product_name = `${copy.listing.product_name || 'Untitled Listing'} Copy`;
+  copy.listing.images = withoutLocalGeneratedImages(copy.listing.images);
   const types = [...new Set((copy.skus||[]).map(sku=>sku.type))];
   const sizes = [...new Set((copy.skus||[]).map(sku=>sku.size))];
   copy.skus = buildSkus(copy.theme_id || getThemeId(), copy.sku_prefix, types.length?types:undefined, sizes.length?sizes:undefined, copy.skus);
@@ -1493,22 +1593,20 @@ function renderAssets() {
     const info = assets.find(a=>a.slot===slot);
     if (!meta || !info) return;
 
-    const genUrl  = info.image_url;
     const listUrl = urls[slot]||'';
-    const dispUrl = listUrl || genUrl;
-    const hasImg  = Boolean(dispUrl);
+    const hasImg  = Boolean(listUrl);
 
     const badge = hasImg
       ? '<span class="badge ok">✓ Present</span>'
       : `<span class="badge ${meta.required?'miss':'opt'}">${meta.required?'Required':'Optional'}</span>`;
 
     const thumb = hasImg
-      ? `<img src="${dispUrl}?v=${Date.now()}" alt="${slot}"/>`
+      ? `<img src="${listUrl}?v=${Date.now()}" alt="${slot}"/>`
       : `<div class="ni">No<br>image</div>`;
 
     const promptSafe = (info.prompt||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    const downloadBtn = genUrl
-      ? `<button class="sm" onclick='downloadImage(${JSON.stringify(genUrl)}, ${JSON.stringify(info.filename)})'>Download</button>`
+    const downloadBtn = listUrl
+      ? `<button class="sm" onclick='downloadImage(${JSON.stringify(listUrl)}, ${JSON.stringify(info.filename)})'>Download</button>`
       : '<button class="sm" disabled>Download</button>';
 
     const card = document.createElement('div');
@@ -1611,26 +1709,30 @@ async function runGeneration(theme, mode, slot, promptOverride) {
   const con      = document.getElementById('console');
   const provider = document.getElementById('providerSel').value;
   const team     = theme === 'pets_world_cup' ? getSelectedTeam() : null;
+  commitActiveItemFromForm();
+  const itemId   = activeItem().id;
   lockBtns(true);
   con.textContent = `Running ${mode} [${provider}] → ${theme}${slot?':'+slot:''}${team?' · '+team.flag+team.name:''}…`;
   try {
     const res = await fetch('/api/generate', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({theme, mode, slot, overwrite:true, provider,
+      body: JSON.stringify({theme, mode, slot, overwrite:false, provider,
+                            listing_id: itemId,
                             prompt_override: promptOverride,
                             team_id: team?.id || null}),
     });
     const d = await res.json();
     con.textContent = [d.stdout,d.stderr].filter(Boolean).join('\n') || JSON.stringify(d,null,2);
-    // For pets_world_cup: backend returns team-scoped URLs; apply them to this listing so
-    // each listing keeps its own image and doesn't share the theme-level slot.
+    // Backend returns listing-scoped URLs; write them back to the tab that started generation.
     if (d.generated_urls && Object.keys(d.generated_urls).length) {
-      const item = activeItem();
-      if (!item.listing) item.listing = {};
-      if (!item.listing.images) item.listing.images = {};
-      Object.assign(item.listing.images, d.generated_urls);
-      await saveListing(true);
+      const item = itemById(itemId);
+      if (item) {
+        if (!item.listing) item.listing = {};
+        if (!item.listing.images) item.listing.images = {};
+        Object.assign(item.listing.images, d.generated_urls);
+        await saveFullConfig(true);
+      }
     }
     await loadAll();
   } catch(e){ con.textContent = String(e); }
@@ -1639,6 +1741,11 @@ async function runGeneration(theme, mode, slot, promptOverride) {
 
 function lockBtns(on) {
   document.querySelectorAll('button').forEach(b=>b.disabled=on);
+  if (!on) {
+    updateExportBtn();
+    checkExistingXLSX();
+    checkTikTokStatus();
+  }
 }
 
 // ─── save listing ─────────────────────────────────────────────────────────────
@@ -1646,6 +1753,7 @@ function collectActiveItem() {
   const themeId = getThemeId();
   const sizes = getSizes(), types = getTypes();
   const item = activeItem();
+  const currentListing = activeListingData();
   const skuPrefix = item.sku_prefix || uniqueSkuPrefix(themeId, item.id);
   const priceRows = buildSkus(themeId, skuPrefix, types, sizes, item.skus);
   const skus = priceRows.map(sku => ({
@@ -1660,15 +1768,16 @@ function collectActiveItem() {
     theme_id: themeId,
     sku_prefix: skuPrefix,
     listing: {
-      category:            activeListingData().category||'Home Decor/Posters & Prints/Prints',
-      brand:               activeListingData().brand   ||'No brand',
+      ...currentListing,
+      category:            currentListing.category||'Home Decor/Posters & Prints/Prints',
+      brand:               currentListing.brand   ||'No brand',
       product_name:        document.getElementById('fName').value,
       product_description: document.getElementById('fDesc').value,
-      images:              activeListingData().images  ||{},
+      images:              currentListing.images  ||{},
       variation_1_name:'Type', variation_2_name:'Size',
       delivery:'Default', warehouse_quantity_1:100, warehouse_quantity_2:0, status:'Draft(2)',
       attributes:{
-        ...(activeListingData().attributes||{}),
+        ...(currentListing.attributes||{}),
         style:    document.getElementById('fAesthetic').value,
         occasion: document.getElementById('fPurpose').value,
         ...(getThemeId()==='pets_world_cup' ? {team: document.getElementById('fTeam').value} : {}),
@@ -1788,9 +1897,10 @@ async function downloadXLSX() {
 async function downloadImagesZip() {
   const st = document.getElementById('expStatus');
   const theme = getThemeId();
+  const listingId = activeItem().id;
   lockBtns(true); st.textContent='Preparing image ZIP…';
   try {
-    const res = await fetch(`/api/images.zip?theme=${encodeURIComponent(theme)}`);
+    const res = await fetch(`/api/images.zip?theme=${encodeURIComponent(theme)}&listing_id=${encodeURIComponent(listingId)}`);
     if (res.ok && res.headers.get('Content-Type')?.includes('zip')) {
       const blob = await res.blob();
       const url  = URL.createObjectURL(blob);
@@ -1840,10 +1950,9 @@ function renderPreview() {
     document.getElementById('pvPrice').textContent=lo===hi?`$${lo}`:`$${lo} – $${hi}`;
   }
 
-  const assets   = getThemeAssets();
   const listedU  = activeListingData().images||{};
   cImages = ['main_image','image_2','image_3','image_4','image_5']
-    .map(s=>assets.find(a=>a.slot===s)?.image_url||listedU[s])
+    .map(s => listedU[s])
     .filter(Boolean);
   cIdx = Math.min(cIdx, Math.max(0,cImages.length-1));
   updateCarousel();
@@ -1893,7 +2002,6 @@ function renderUrlInputs() {
 }
 
 async function checkExistingXLSX() {
-  // HEAD the export endpoint to see if a file already exists
   try {
     const res = await fetch('/api/export', {method:'HEAD'});
     if (res.ok) {
@@ -1902,6 +2010,264 @@ async function checkExistingXLSX() {
         'outputs/inkerastory_tiktok_bulk_upload.xlsx  ·  previously built';
     }
   } catch(_){}
+}
+
+// ─── batch: check TikTok credentials ─────────────────────────────────────────
+async function checkTikTokStatus() {
+  try {
+    const res = await fetch('/api/tiktok/status');
+    const d = await res.json();
+    const uploadBtn = document.getElementById('uploadTikTokBtn');
+    const shopBtn = document.getElementById('shopSubmitBtn');
+    const st  = document.getElementById('tiktokStatus');
+    if (d.upload_configured) {
+      uploadBtn.disabled = false;
+    } else {
+      uploadBtn.disabled = true;
+    }
+    if (d.shop_configured) {
+      shopBtn.disabled = false;
+    } else {
+      shopBtn.disabled = true;
+    }
+    if (d.upload_configured && d.shop_configured && d.ai_configured) {
+      st.style.color = 'var(--ok)';
+      st.textContent = '✓ AI / TikTok Media / Shop API 已配置';
+    } else {
+      st.style.color = 'var(--warn)';
+      const missing = [];
+      if (!d.ai_configured) missing.push('OPENAI_API_KEY');
+      if (!d.upload_configured) missing.push('Media upload credentials');
+      if (!d.shop_configured) missing.push(...(d.shop_missing||['Shop publish credentials']));
+      st.textContent = '⚠ 待配置: ' + [...new Set(missing)].join(' / ');
+    }
+  } catch(_) {}
+}
+
+// ─── batch: create one listing per art style ─────────────────────────────────
+async function batchCreateListings() {
+  const existingThemes = new Set((listing.listings||[]).map(item=>item.theme_id));
+  const allStyles = Object.values(CAT_STYLES).flat();
+  const toCreate = allStyles.filter(s => !existingThemes.has(s.theme));
+
+  if (!toCreate.length) {
+    alert('所有风格的 Listing 都已存在。');
+    return;
+  }
+
+  const names = toCreate.map(s=>s.label).join('\n  ');
+  if (!confirm(`将新建 ${toCreate.length} 个 Listing:\n  ${names}\n\n继续？`)) return;
+
+  commitActiveItemFromForm();
+
+  toCreate.forEach(style => {
+    const themeId = style.theme;
+    const id = uniqueItemId();
+    const skuPrefix = uniqueSkuPrefix(themeId);
+    listing.listings.push({
+      id,
+      theme_id: themeId,
+      sku_prefix: skuPrefix,
+      listing: {
+        category: 'Home Decor/Posters & Prints/Prints',
+        brand: 'No brand',
+        product_name:        NAME_TPL[themeId] || '',
+        product_description: DESC[themeId]     || '',
+        images: {},
+        variation_1_name: 'Type', variation_2_name: 'Size',
+        delivery: 'Default', warehouse_quantity_1: 100, warehouse_quantity_2: 0, status: 'Draft(2)',
+        attributes: {style: 'Minimalist', occasion: 'Gift'},
+      },
+      skus: buildSkus(themeId, skuPrefix),
+    });
+  });
+
+  await saveFullConfig(true);
+  await loadAll();
+}
+
+// ─── batch: generate images for every listing ────────────────────────────────
+async function batchGenerateAll(mode='live') {
+  const provider = document.getElementById('providerSel').value;
+  const con = document.getElementById('batchConsole');
+  con.style.display = 'block';
+  con.textContent = `开始批量生成 (${mode}, ${provider})…`;
+  lockBtns(true);
+
+  commitActiveItemFromForm();
+  let ok = 0, fail = 0;
+
+  for (const item of (listing.listings || [])) {
+    con.textContent += `\n[${item.theme_id}] ${item.id}…`;
+    const teamId = item.theme_id === 'pets_world_cup'
+      ? (item.listing?.attributes?.team || 'argentina')
+      : null;
+    try {
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          theme: item.theme_id, mode, slot: null, overwrite: false,
+          provider, listing_id: item.id, team_id: teamId,
+        }),
+      });
+      const d = await res.json();
+      if (d.generated_urls && Object.keys(d.generated_urls).length) {
+        const target = itemById(item.id);
+        if (target) {
+          if (!target.listing) target.listing = {};
+          if (!target.listing.images) target.listing.images = {};
+          Object.assign(target.listing.images, d.generated_urls);
+        }
+        ok++;
+        con.textContent += ` ✓ (${Object.keys(d.generated_urls).length} 张)`;
+      } else {
+        fail++;
+        con.textContent += ` ✗ 未生成图片`;
+        if (d.stderr) con.textContent += `\n  ${d.stderr.slice(0,120)}`;
+      }
+    } catch(e) {
+      fail++;
+      con.textContent += ` ✗ ${e}`;
+    }
+  }
+
+  await saveFullConfig(true);
+  await loadAll();
+  lockBtns(false);
+  con.textContent += `\n\n完成: ${ok} 成功, ${fail} 失败`;
+}
+
+// ─── batch: AI listing copy ──────────────────────────────────────────────────
+async function generateAICopy() {
+  const con = document.getElementById('batchConsole');
+  const selectedIds = getSelectedListingIds();
+  if (!selectedIds.length) { alert('请至少选择一个 Listing。'); return; }
+  con.style.display = 'block';
+  con.textContent = `AI 生成 ${selectedIds.length} 个 Listing 的标题/五点/关键词…`;
+  lockBtns(true);
+
+  try {
+    const saved = await saveListing(true);
+    if (!saved) {
+      con.textContent += '\n✗ 保存失败';
+    } else {
+      const res = await fetch('/api/listing/ai-copy', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({listing_ids: selectedIds}),
+      });
+      const d = await res.json();
+      if (d.ok || d.updated) {
+        con.textContent += `\n✓ 已更新 ${d.updated} 个 Listing`;
+        if (d.results) {
+          Object.entries(d.results).forEach(([lid, copy]) => {
+            con.textContent += `\n[${lid}] ${copy.title}`;
+          });
+        }
+        await loadAll();
+      } else {
+        con.textContent += `\n✗ ${d.error || JSON.stringify(d.errors || d, null, 2)}`;
+        if (d.needs_setup) con.textContent += '\n在 .env 中添加 OPENAI_API_KEY 后再试。';
+      }
+    }
+  } catch(e) {
+    con.textContent += `\n✗ ${e}`;
+  } finally {
+    lockBtns(false);
+  }
+}
+
+// ─── batch: upload all listing images to TikTok Media Center ─────────────────
+async function uploadAllToTikTok() {
+  const con = document.getElementById('batchConsole');
+  con.style.display = 'block';
+  con.textContent = '上传所有 Listing 图片到 TikTok 媒体库…';
+  lockBtns(true);
+
+  const listingIds = (listing.listings||[]).map(item=>item.id);
+  try {
+    const res = await fetch('/api/tiktok/upload', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({listing_ids: listingIds}),
+    });
+    const d = await res.json();
+    if (d.ok) {
+      con.textContent += `\n✓ 上传完成: ${d.uploaded} 张图片`;
+      // Merge TikTok URLs back into in-memory listings
+      if (d.listing_urls) {
+        for (const [lid, urls] of Object.entries(d.listing_urls)) {
+          const item = itemById(lid);
+          if (item) {
+            if (!item.listing) item.listing = {};
+            if (!item.listing.images) item.listing.images = {};
+            Object.assign(item.listing.images, urls);
+          }
+        }
+        await saveFullConfig(true);
+        await loadAll();
+      }
+    } else {
+      con.textContent += `\n✗ ${d.error}`;
+      if (d.needs_setup) {
+        con.textContent += '\n\n配置步骤:\n1. 登录 TikTok Open Platform\n2. 创建/找到你的 App\n3. 获取 App Key、App Secret、Access Token\n4. 添加到项目根目录的 .env 文件';
+      }
+    }
+  } catch(e) {
+    con.textContent += `\n✗ ${e}`;
+  }
+  lockBtns(false);
+}
+
+// ─── batch: build/submit TikTok Shop product payloads ────────────────────────
+async function publishToTikTokShop(dryRun=true) {
+  const con = document.getElementById('batchConsole');
+  const selectedIds = getSelectedListingIds();
+  if (!selectedIds.length) { alert('请至少选择一个 Listing。'); return; }
+  if (!dryRun && !confirm('会调用 TikTok Shop API 创建草稿商品。建议先点“生成 Payload”检查 JSON。继续？')) return;
+
+  con.style.display = 'block';
+  con.textContent = dryRun
+    ? `生成 ${selectedIds.length} 个 Shop API payload…`
+    : `提交 ${selectedIds.length} 个 TikTok Shop 草稿…`;
+  lockBtns(true);
+
+  try {
+    const saved = await saveListing(true);
+    if (!saved) {
+      con.textContent += '\n✗ 保存失败';
+    } else {
+      const res = await fetch('/api/tiktok/publish', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({listing_ids: selectedIds, dry_run: dryRun}),
+      });
+      const d = await res.json();
+      if (d.ok || d.prepared) {
+        con.textContent += dryRun
+          ? `\n✓ 已生成 ${d.prepared} 个 payload`
+          : `\n✓ 已提交 ${d.submitted} 个草稿`;
+        if (d.payload_paths) {
+          Object.entries(d.payload_paths).forEach(([lid, path]) => {
+            con.textContent += `\n[${lid}] ${path}`;
+          });
+        }
+        if (d.warnings) {
+          Object.entries(d.warnings).forEach(([lid, warnings]) => {
+            (warnings || []).forEach(w => { con.textContent += `\n⚠ [${lid}] ${w}`; });
+          });
+        }
+        if (!dryRun) await loadAll();
+      } else {
+        con.textContent += `\n✗ ${d.error || JSON.stringify(d.errors || d, null, 2)}`;
+      }
+    }
+  } catch(e) {
+    con.textContent += `\n✗ ${e}`;
+  } finally {
+    lockBtns(false);
+  }
 }
 
 init();
@@ -1953,8 +2319,9 @@ class StudioHandler(BaseHTTPRequestHandler):
         if p == "/api/images.zip":
             params = urllib.parse.parse_qs(parsed.query)
             theme_id = params.get("theme", ["pets"])[0]
+            listing_id = params.get("listing_id", [None])[0]
             try:
-                filename, body, count = build_images_zip(theme_id)
+                filename, body, count = build_images_zip(theme_id, listing_id)
             except FileNotFoundError as e:
                 json_response(self, 404, {"ok": False, "error": str(e)}); return
             except Exception as e:
@@ -1966,6 +2333,33 @@ class StudioHandler(BaseHTTPRequestHandler):
             self.send_header("X-Image-Count", str(count))
             self.end_headers()
             self.wfile.write(body)
+            return
+
+        if p == "/api/tiktok/status":
+            import sys as _sys
+            _sys.path.insert(0, str(ROOT / "scripts"))
+            try:
+                from listing_copy_agent import check_openai_credentials
+                from tiktok_media_upload import check_credentials as check_media_credentials
+                from tiktok_shop_publish import check_credentials as check_shop_credentials
+                shop = check_shop_credentials(require_publish_fields=True)
+                json_response(self, 200, {
+                    "configured": check_media_credentials(),
+                    "upload_configured": check_media_credentials(),
+                    "shop_configured": shop["configured"],
+                    "shop_missing": shop["missing"],
+                    "ai_configured": check_openai_credentials(),
+                    "shop": shop,
+                })
+            except Exception as e:
+                json_response(self, 200, {
+                    "configured": False,
+                    "upload_configured": False,
+                    "shop_configured": False,
+                    "shop_missing": ["status_error"],
+                    "ai_configured": False,
+                    "error": str(e),
+                })
             return
 
         if p == "/api/export":
@@ -1999,27 +2393,31 @@ class StudioHandler(BaseHTTPRequestHandler):
                 slot    = payload.get("slot")
                 mode    = payload.get("mode", "dry-run")
                 team_id = payload.get("team_id")
+                listing_id = payload.get("listing_id")
+                overwrite = bool(payload.get("overwrite", False))
 
-                # For pets_world_cup, substitute team placeholders per slot and
-                # write to a team-scoped output dir so each listing stays isolated
-                if theme == "pets_world_cup" and team_id and team_id in SOCCER_TEAMS:
-                    team       = SOCCER_TEAMS[team_id]
+                if listing_id:
                     wf_cfg     = load_workflow_config()
-                    pwc        = next((t for t in wf_cfg["themes"] if t["id"] == "pets_world_cup"), None)
-                    slots_to_run = [slot] if slot else [a["slot"] for a in (pwc["assets"] if pwc else [])]
-                    output_dir = f"outputs/generated_images/pets_world_cup/{team_id}"
+                    theme_cfg  = next((t for t in wf_cfg["themes"] if t["id"] == theme), None)
+                    slots_to_run = [slot] if slot else [a["slot"] for a in (theme_cfg["assets"] if theme_cfg else [])]
+                    output_dir = listing_output_dir(theme, listing_id, team_id)
                     combined   = {"ok": True, "stdout": "", "stderr": "", "returncode": 0, "generated_urls": {}}
                     for s in slots_to_run:
-                        asset = next((a for a in pwc["assets"] if a["slot"] == s), None) if pwc else None
-                        prompt = asset["prompt"] if asset else None
-                        if prompt:
+                        asset = next((a for a in theme_cfg["assets"] if a["slot"] == s), None) if theme_cfg else None
+                        prompt = None
+                        if payload.get("prompt_override") and slot == s:
+                            prompt = payload.get("prompt_override")
+                        elif asset:
+                            prompt = asset["prompt"]
+                        if prompt and theme == "pets_world_cup" and team_id and team_id in SOCCER_TEAMS:
+                            team = SOCCER_TEAMS[team_id]
                             prompt = (prompt
                                 .replace("{team_name}", team["name"])
                                 .replace("{team_colors}", team["colors"])
                                 .replace("[PET NAME]", "BUDDY"))
                         r = run_generation(
                             theme=theme, mode=mode, slot=s,
-                            limit=payload.get("limit"), overwrite=bool(payload.get("overwrite", True)),
+                            limit=payload.get("limit"), overwrite=overwrite,
                             provider=payload.get("provider", "openai"), prompt_override=prompt,
                             output_dir=output_dir,
                         )
@@ -2029,7 +2427,7 @@ class StudioHandler(BaseHTTPRequestHandler):
                             combined["ok"] = False
                             combined["returncode"] = r["returncode"]
                         if asset and r["ok"]:
-                            gen_path = ROOT / output_dir / Path(asset["filename"]).name
+                            gen_path = generated_asset_path(output_dir, theme, asset["filename"])
                             if gen_path.exists():
                                 combined["generated_urls"][s] = file_url(gen_path)
                     result = combined
@@ -2039,7 +2437,7 @@ class StudioHandler(BaseHTTPRequestHandler):
                         mode            = mode,
                         slot            = slot,
                         limit           = payload.get("limit"),
-                        overwrite       = bool(payload.get("overwrite", True)),
+                        overwrite       = overwrite,
                         provider        = payload.get("provider", "openai"),
                         prompt_override = payload.get("prompt_override"),
                     )
@@ -2060,6 +2458,93 @@ class StudioHandler(BaseHTTPRequestHandler):
             ids = payload.get("listing_ids")  # list[str] | None
             result = run_export(listing_ids=ids)
             json_response(self, 200 if result["ok"] else 500, result); return
+
+        if p == "/api/listing/ai-copy":
+            try:
+                import sys as _sys
+                _sys.path.insert(0, str(ROOT / "scripts"))
+                from listing_copy_agent import check_openai_credentials, generate_copy_for_config
+                if not check_openai_credentials() and not payload.get("mock"):
+                    json_response(self, 400, {
+                        "ok": False,
+                        "error": "OpenAI API 未配置。请在 .env 中添加 OPENAI_API_KEY",
+                        "needs_setup": True,
+                    }); return
+                listing_ids: list[str] = payload.get("listing_ids") or []
+                config = load_listing_config()
+                result = generate_copy_for_config(
+                    config,
+                    listing_ids=listing_ids,
+                    model=payload.get("model"),
+                    mock=bool(payload.get("mock", False)),
+                )
+                if result.get("updated"):
+                    save_listing_config(result["config"])
+                response = {key: value for key, value in result.items() if key != "config"}
+                json_response(self, 200 if result.get("updated") else 500, response)
+            except Exception as e:
+                json_response(self, 500, {"ok": False, "error": str(e)})
+            return
+
+        if p == "/api/tiktok/upload":
+            try:
+                import sys as _sys
+                _sys.path.insert(0, str(ROOT / "scripts"))
+                from tiktok_media_upload import check_credentials, upload_listing_images
+                if not check_credentials():
+                    json_response(self, 400, {
+                        "ok": False,
+                        "error": "TikTok API 未配置。请在 .env 中添加 TIKTOK_APP_KEY / TIKTOK_APP_SECRET / TIKTOK_ACCESS_TOKEN",
+                        "needs_setup": True,
+                    }); return
+                listing_ids: list[str] = payload.get("listing_ids") or []
+                config = load_listing_config()
+                all_results: dict[str, dict[str, str]] = {}
+                total_uploaded = 0
+                for item in config.get("listings", []):
+                    if item.get("id") not in listing_ids:
+                        continue
+                    urls = upload_listing_images(item)
+                    if urls:
+                        all_results[item["id"]] = urls
+                        total_uploaded += len(urls)
+                # Persist TikTok URLs back into listing config
+                if all_results:
+                    config2 = load_listing_config()
+                    for item in config2.get("listings", []):
+                        if item["id"] in all_results:
+                            item.setdefault("listing", {}).setdefault("images", {}).update(all_results[item["id"]])
+                    save_listing_config(config2)
+                json_response(self, 200, {"ok": True, "uploaded": total_uploaded, "listing_urls": all_results})
+            except Exception as e:
+                json_response(self, 500, {"ok": False, "error": str(e)})
+            return
+
+        if p == "/api/tiktok/publish":
+            try:
+                import sys as _sys
+                _sys.path.insert(0, str(ROOT / "scripts"))
+                from tiktok_shop_publish import check_credentials, publish_config
+                dry_run = bool(payload.get("dry_run", True))
+                if not dry_run:
+                    status = check_credentials(require_publish_fields=True)
+                    if not status["configured"]:
+                        json_response(self, 400, {
+                            "ok": False,
+                            "error": "TikTok Shop API 未配置完整。请补齐 .env: " + ", ".join(status["missing"]),
+                            "missing": status["missing"],
+                            "needs_setup": True,
+                        }); return
+                listing_ids: list[str] = payload.get("listing_ids") or []
+                config = load_listing_config()
+                result = publish_config(config, listing_ids=listing_ids, dry_run=dry_run)
+                if not dry_run and result.get("submitted"):
+                    save_listing_config(result["config"])
+                response = {key: value for key, value in result.items() if key != "config"}
+                json_response(self, 200 if result.get("prepared") else 500, response)
+            except Exception as e:
+                json_response(self, 500, {"ok": False, "error": str(e)})
+            return
 
         json_response(self, 404, {"error": "Not found"})
 

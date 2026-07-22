@@ -1,7 +1,7 @@
 {
   "template_path": "input_template.xlsx",
   "output_path": "outputs/inkerastory_tiktok_bulk_upload.xlsx",
-  "active_listing_id": "item_mqh3n8q2_wgy0",
+  "active_listing_id": "item_mqh1dfqc_gwu6",
   "listings": [
     {
       "id": "item_1",
@@ -260,7 +260,13 @@
         "brand": "No brand",
         "product_name": "Personalized Pet Portrait Canvas Print | Custom Dog Cat Photo Wall Art | Pet Gift | INKERASTORY",
         "product_description": "INKERASTORY - Ink Your Pet Story on Canvas\n\nTurn your favorite dog, cat, or pet photo into warm personalized wall art — perfect for home decor, gifting, and keepsakes.\n\nEach piece is made to order. Add your pet's name, a short quote, or keep it portrait-focused.\n\nPerfect for:\n- Dog & cat portraits  ·  Pet memorial keepsakes\n- New pet parent gifts  ·  Birthday & holiday gifts\n- Multi-pet family photos\n\nProduct Features:\n- Personalized from your photo  ·  Premium HD printing\n- Fade-resistant inks  ·  Print Only or Stretched Canvas\n- Multiple sizes\n\nHow It Works:\n1. Upload a clear pet photo after ordering\n2. Add optional name, quote, date, or note\n3. Choose print-only or stretched canvas\n4. We send you a final image for cinfirmation and create your custom pet portrait artwork\n5. Receive a unique piece that keeps your pet's story close\n\nINKERASTORY - Because every pet story deserves a place on your wall.",
-        "images": {},
+        "images": {
+          "image_4": "/files/outputs/generated_images/listings/item_mqh1dfqc_gwu6/argentina/pets_world_cup/pets_world_cup_04_fan_room.png",
+          "image_5": "/files/outputs/generated_images/listings/item_mqh1dfqc_gwu6/argentina/pets_world_cup/pets_world_cup_05_size_chart.png",
+          "image_6": "/files/outputs/generated_images/listings/item_mqh1dfqc_gwu6/argentina/pets_world_cup/pets_world_cup_06_print_flatlay.png",
+          "image_3": "/files/outputs/generated_images/listings/item_mqh1dfqc_gwu6/argentina/pets_world_cup/pets_world_cup_03_fan_gift.png",
+          "image_2": "/files/outputs/generated_images/listings/item_mqh1dfqc_gwu6/argentina/pets_world_cup/pets_world_cup_02_before_after.png"
+        },
         "variation_1_name": "Type",
         "variation_2_name": "Size",
         "delivery": "Default",
@@ -379,7 +385,14 @@
         "brand": "No brand",
         "product_name": "Custom Pet Soccer Jersey Canvas | Dog Cat in Team Colors | Soccer Fan Gift | INKERASTORY",
         "product_description": "INKERASTORY - Your Pet in Their Team's Jersey, on Canvas\n\nTurn your dog or cat into the ultimate soccer fan — wearing their team's jersey, printed on premium canvas wall art.\n\nEach piece is made to order from your pet photo. Choose your team and we transform your pet into a jersey-wearing fan portrait ready to display on match day and every day after.\n\nPerfect for:\n- Soccer fans who love their pets  ·  World Cup season gifts\n- Match day home decor  ·  Fan caves and game rooms\n- Birthday gifts for soccer parents\n\nProduct Features:\n- Personalized from your pet photo  ·  Custom team jersey art style\n- Premium HD printing  ·  Fade-resistant inks\n- Print Only or Stretched Canvas  ·  Multiple sizes\n\nHow It Works:\n1. Upload a clear pet photo after ordering\n2. Add optional name, quote, date, or note\n3. Choose print-only or stretched canvas\n4. We send you a final image for cinfirmation and create your custom pet portrait artwork\n5. Receive a unique piece that keeps your pet's story close\n\nINKERASTORY - Because every fan story deserves a place on your wall.",
-        "images": {},
+        "images": {
+          "main_image": "/files/outputs/generated_images/listings/item_mqh3n8q2_wgy0/france/pets_world_cup/pets_world_cup_01_main_jersey.png",
+          "image_2": "/files/outputs/generated_images/listings/item_mqh3n8q2_wgy0/france/pets_world_cup/pets_world_cup_02_before_after.png",
+          "image_3": "/files/outputs/generated_images/listings/item_mqh3n8q2_wgy0/france/pets_world_cup/pets_world_cup_03_fan_gift.png",
+          "image_6": "https://p16-oec-general-useast5.ttcdn-us.com/tos-useast5-i-omjb5zjo8w-tx/12012cb8db0540ada0caec9288f72769~tplv-fhlh96nyum-origin-jpeg.jpeg?dr=12178&t=555f072d&ps=933b5bde&shp=5563f2fb&shcp=9cd7d13a&idc=useast5&from=1432613627width=1024&height=1024",
+          "image_5": "/files/outputs/generated_images/listings/item_mqh3n8q2_wgy0/france/pets_world_cup/pets_world_cup_05_size_chart.png",
+          "image_4": "/files/outputs/generated_images/listings/item_mqh3n8q2_wgy0/france/pets_world_cup/pets_world_cup_04_fan_room.png"
+        },
         "variation_1_name": "Type",
         "variation_2_name": "Size",
         "delivery": "Default",
